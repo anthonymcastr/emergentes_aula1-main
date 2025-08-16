@@ -16,15 +16,14 @@ export function CardAnimal({data}: {data: Animal}) {
             </a>
             <div className="p-5">
                 <a href="#">
-                    <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                        {data.nome} 
-                        
+                    <h5 className="underline mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        Nome: {data.nome}
                     </h5>
                     <h4 className="mb-2 font-bold tracking-tight text-gray-900 dark:text-white">
                         Idade: {data.idade} anos
                     </h4>
                 </a>
-                <p className={`mb-2 font-bold ${tipoCor}`}>
+                <p className={`mb-2 font-extrabold ${tipoCor}`}>
                    Tipo: {data.tipo}
                 </p>
                 <p className={`mb-2 font-bold`}>
