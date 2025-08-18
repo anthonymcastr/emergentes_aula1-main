@@ -3,9 +3,9 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 
 import App from './App.tsx'
-import Inclusao from './Inclusao.tsx'
-import Listagem from './Listagem.tsx'
-import Sobre from './Sobre.tsx'
+import Inclusao from './routes/Inclusao.tsx'
+import Listagem from './routes/Listagem.tsx'
+import Sobre from './routes/Sobre.tsx'
 
 import Layout from './Layout.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'

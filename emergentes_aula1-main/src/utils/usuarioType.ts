@@ -4,6 +4,5 @@ export type UsuarioType = {
   idade: number
   email: string
   urlImagem: string
-  cidade: string
 }
 

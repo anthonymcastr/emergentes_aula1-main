@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import type { Animal } from "./utils/animalType";
-import { CardAnimal } from "./components/CardAnimal";
-import { InputPesquisa } from "./components/InputPesquisa";
+import type { Animal } from "../utils/animalType";
+import { CardAnimal } from "../components/CardAnimal";
+import { InputPesquisa } from "../components/InputPesquisa";
 
 export default function Listagem() {
   const [animais, setAnimais] = useState<Animal[]>([]);
