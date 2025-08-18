@@ -3,6 +3,7 @@ import cors from 'cors'
 
 
 import routesAnimais from './routes/animais'
+import routesPesquisa from './routes/pesquisa'
 
 const app = express()
 const port = 3000
@@ -12,6 +13,7 @@ app.use(cors())
 
 
 app.use("/animais", routesAnimais)
+app.use("/pesquisa", routesPesquisa)
 
 app.get('/', (req, res) => {
   res.send('API: Cadastro de Animais')
