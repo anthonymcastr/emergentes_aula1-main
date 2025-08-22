@@ -7,8 +7,8 @@ export type Animal = {
   raca: string
   urlImagem: string
   tipo: 'adocao' | 'encontrado' | 'perdido'
-  cidade: 'pelotas'
-  usuarioId: UsuarioType
+  cidade: string
+  usuarioId: number
+  usuario?: UsuarioType
 }
-
-
+export type AnimalType = Omit<Animal, 'id' | 'usuario'>
