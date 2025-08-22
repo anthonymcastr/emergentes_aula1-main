@@ -31,7 +31,7 @@ export default function Listagem() {
         </h1>
 
         {cardSelecionado ? (
-          // Renderiza apenas o card expandido se houver um selecionado
+          
           <CardExpandido animal={cardSelecionado} onClose={() => setCardSelecionado(null)} />
         ) : (
           <div className="flex flex-wrap gap-6">
