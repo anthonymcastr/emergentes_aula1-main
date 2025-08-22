@@ -15,7 +15,7 @@ const animalSchema = z.object({
   usuarioId: z.number().min(1, { message: "ID do usuário deve ser um número positivo" })
 })
 
-// utilitário para normalizar texto (remove acentos e coloca em maiúsculo)
+
 function normalize(text: string) {
   return text
     .normalize("NFD")
@@ -23,9 +23,7 @@ function normalize(text: string) {
     .toUpperCase()
 }
 
-// ===== CRUD =====
 
-// listar todos
 router.get("/", async (req, res) => {
   try {
     const animais = await prisma.animal.findMany()
@@ -35,8 +33,7 @@ router.get("/", async (req, res) => {
   }
 })
 
-// ===== Pesquisa =====
-// Colocar ANTES da rota de :id
+
 router.get("/pesquisa", async (req, res) => {
   const termo = (req.query.termo as string)?.trim()
   if (!termo) return res.status(400).json({ erro: 'O termo de busca é obrigatório.' })
@@ -44,17 +41,17 @@ router.get("/pesquisa", async (req, res) => {
   const filtros: any[] = []
   const termoUpper = termo.toUpperCase()
 
-  // Filtro por tipo (enum)
+ 
   if (Object.values(TipoAnimal).includes(termoUpper as TipoAnimal)) {
     filtros.push({ tipo: termoUpper as TipoAnimal })
   }
 
-  // Filtro por cidade (enum)
+ 
   if (Object.values(tipoCidade).includes(termoUpper as tipoCidade)) {
     filtros.push({ cidade: termoUpper as tipoCidade })
   }
 
-  // Filtro por raça (case-insensitive)
+ 
   filtros.push({ raca: { equals: termo, mode: 'insensitive' } })
 
   try {
@@ -129,5 +126,22 @@ router.delete("/:id", async (req, res) => {
     res.status(400).json({ error })
   }
 })
+
+
+// POST /animais/bulk
+router.post("/bulk", async (req, res) => {
+  const animais = req.body; // espera um array de objetos
+  try {
+    const resultado = await prisma.animal.createMany({
+      data: animais,
+      skipDuplicates: true, // opcional: ignora registros duplicados
+    });
+    res.status(201).json(resultado);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ erro: error });
+  }
+});
+
 
 export default router

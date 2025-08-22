@@ -18,6 +18,8 @@ model Animal {
   usuarioId  Int
 }
 
+
+
 enum TipoAnimal {
   ADOCAO
   PERDIDO
