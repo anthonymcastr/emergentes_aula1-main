@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
 
   const filtros: any[] = [];
 
-  // Filtro por raça
+  
   filtros.push({
     raca: {
       contains: termo,
@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
     },
   });
 
-  // Filtro por tipo (se for enum válido)
+  
   if (isTipoAnimal(termo.toUpperCase())) {
     filtros.push({
       tipo: termo.toUpperCase() as TipoAnimal,

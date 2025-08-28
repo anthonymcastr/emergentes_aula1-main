@@ -6,6 +6,7 @@ import App from './App.tsx'
 import Inclusao from './routes/Inclusao.tsx'
 import Listagem from './routes/Listagem.tsx'
 import Sobre from './routes/Sobre.tsx'
+import Login from './routes/Login.tsx'
 
 import Layout from './Layout.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -19,6 +20,7 @@ const rotas = createBrowserRouter([
       { path: 'inclusao', element: <Inclusao /> },
       { path: 'listagem', element: <Listagem /> },
       { path: 'sobre', element: <Sobre /> },
+      { path: 'login', element: <Login />}
     ],
   },
 ])
