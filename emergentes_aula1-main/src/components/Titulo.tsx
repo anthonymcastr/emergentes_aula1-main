@@ -55,12 +55,22 @@ export default function Titulo() {
             </li>
             <li>
               <Link
+                to="/Login"
+                className="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:p-0 md:text-white md:hover:font-bold md:dark:text-blue-500"
+              >
+                Login
+              </Link>
+            </li>
+            {localStorage.getItem("token") && (
+              <li>
+              <Link
                 to="/inclusao"
                 className="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:p-0 md:text-white md:hover:font-bold md:dark:text-blue-500"
               >
                 Inclusão
               </Link>
-            </li>
+              </li>
+            )}
             <li>
               <Link
                 to="/listagem"
@@ -77,6 +87,7 @@ export default function Titulo() {
                 Sobre
               </Link>
             </li>
+            
           </ul>
         </div>
       </div>
