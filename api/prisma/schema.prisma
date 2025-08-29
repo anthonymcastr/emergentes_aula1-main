@@ -16,6 +16,19 @@ model Animal {
   tipo       TipoAnimal
   cidade     tipoCidade
   usuarioId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Cliente {
+  id        Int     @id @default(autoincrement())
+  nome      String
+  email     String  @unique
+  telefone  String
+  senha     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 
