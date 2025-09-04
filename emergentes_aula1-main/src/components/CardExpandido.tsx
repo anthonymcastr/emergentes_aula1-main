@@ -1,27 +1,36 @@
-import { useState } from "react";
-import type { Animal } from "../utils/animalType";
+import { useState } from "react"
+import type { Animal } from "../utils/animalType"
+import { useClienteStore } from "../context/ClienteContext"
 
 type Props = {
-  animal: Animal;
-  onClose: () => void;
-};
+  animal: Animal
+  onClose: () => void
+}
 
 export function CardExpandido({ animal, onClose }: Props) {
-  const [mensagem, setMensagem] = useState("");
+  const [mensagem, setMensagem] = useState("")
+  const { cliente } = useClienteStore()
 
   const handleEnviar = () => {
-    console.log("Mensagem enviada:", mensagem);
-    alert(`Mensagem enviada para o dono de ${animal.nome}: "${mensagem}"`);
-    setMensagem("");
-    onClose();
-  };
+    if (!cliente) {
+      alert("Você precisa estar logado para enviar uma mensagem 🐾")
+      return
+    }
+
+    console.log("Mensagem enviada:", mensagem)
+    alert(`Mensagem enviada para o dono de ${animal.nome}: "${mensagem}"`)
+    setMensagem("")
+    onClose()
+  }
+
+  const usuarioLogado = !!cliente
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-md">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-md relative">
         <button
           onClick={onClose}
-          className="text-gray-500 hover:text-gray-800 dark:hover:text-white float-right text-xl font-bold"
+          className="absolute right-4 top-4 text-gray-500 hover:text-gray-800 dark:hover:text-white text-xl font-bold"
         >
           ✕
         </button>
@@ -35,18 +44,28 @@ export function CardExpandido({ animal, onClose }: Props) {
         <textarea
           value={mensagem}
           onChange={(e) => setMensagem(e.target.value)}
-          placeholder="Escreva sua mensagem..."
+          placeholder={
+            usuarioLogado
+              ? "Escreva sua mensagem..."
+              : "Faça login para entrar em contato"
+          }
           className="w-full mt-4 p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           rows={4}
+          disabled={!usuarioLogado}
         />
 
         <button
           onClick={handleEnviar}
-          className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white rounded-lg py-2"
+          disabled={!usuarioLogado}
+          className={`mt-4 w-full rounded-lg py-2 ${
+            usuarioLogado
+              ? "bg-green-600 hover:bg-green-700 text-white"
+              : "bg-gray-400 text-gray-700 cursor-not-allowed"
+          }`}
         >
-          Enviar
+          {usuarioLogado ? "Enviar" : "Login necessário"}
         </button>
       </div>
     </div>
-  );
+  )
 }

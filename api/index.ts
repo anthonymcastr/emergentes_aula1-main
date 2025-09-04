@@ -18,6 +18,8 @@ app.use("/animais", routesAnimais)
 app.use("/pesquisa", routesPesquisa)
 app.use("/clientes", routesClientes)
 app.use("/login", routesLogin)
+app.use("/clientes/login", routesLogin)
+
 
 app.get('/', (req, res) => {
   res.send('API: Cadastro de Animais')
