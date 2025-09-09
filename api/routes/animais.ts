@@ -65,7 +65,6 @@ router.get("/pesquisa", async (req, res) => {
   }
 })
 
-// buscar por id
 router.get("/:id", async (req, res) => {
   const { id } = req.params
   try {
@@ -78,7 +77,7 @@ router.get("/:id", async (req, res) => {
   }
 })
 
-// criar
+
 router.post("/", async (req, res) => {
   const valida = animalSchema.safeParse(req.body)
   if (!valida.success) return res.status(400).json({ erro: valida.error.errors })
@@ -95,7 +94,7 @@ router.post("/", async (req, res) => {
   }
 })
 
-// atualizar
+
 router.put("/:id", async (req, res) => {
   const { id } = req.params
   const valida = animalSchema.safeParse(req.body)
@@ -114,7 +113,7 @@ router.put("/:id", async (req, res) => {
   }
 })
 
-// excluir
+
 router.delete("/:id", async (req, res) => {
   const { id } = req.params
   try {
@@ -128,7 +127,7 @@ router.delete("/:id", async (req, res) => {
 })
 
 
-// POST /animais/bulk
+
 router.post("/bulk", async (req, res) => {
   const animais = req.body; // espera um array de objetos
   try {
