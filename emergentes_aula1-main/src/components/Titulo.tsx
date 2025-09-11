@@ -41,7 +41,7 @@ export default function Titulo() {
           } w-full md:block md:w-auto`}
           id="navbar-default"
         >
-          <ul className="font-medium flex flex-col p-4 md:flex-row md:space-x-8 md:p-0 mt-4 border border-gray-100 rounded-lg md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+          <ul className="font-medium flex flex-col p-4 md:flex-row md:space-x-5 md:p-0 rounded-lg  dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
             <li>
               <Link
                 to="/"
@@ -76,7 +76,7 @@ export default function Titulo() {
                 <li>
                   <Link
                     to="/contato"
-                    className="block text-white bg-blue-100 rounded-sm md:bg-blue-950 md:p-0.5 md:hover:bg-blue-500"
+                    className="block text-white md:p-0.5 md:hover:font-bold "
                     onClick={() => setMenuAberto(false)}
                   >
                     Minhas Mensagens
