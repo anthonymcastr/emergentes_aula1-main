@@ -32,7 +32,7 @@ export function CardExpandido({ animal, onClose }: Props) {
 
       if (!response.ok) throw new Error("Falha ao enviar mensagem")
 
-      alert(`Mensagem enviada para o dono de ${animal.nome}: "${mensagem}"`)
+      alert(`Mensagem enviada para o usuário que cadastrou ${animal.nome}: "${mensagem}"`)
       setMensagem("")
       onClose()
     } catch (err) {

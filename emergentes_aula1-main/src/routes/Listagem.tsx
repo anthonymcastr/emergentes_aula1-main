@@ -8,7 +8,6 @@ export default function Listagem() {
   const [animais, setAnimais] = useState<Animal[]>([]);
   const [cardSelecionado, setCardSelecionado] = useState<Animal | null>(null);
 
-  // Carrega todos os animais inicialmente
   useEffect(() => {
     async function buscaDados() {
       const response = await fetch("http://localhost:3000/animais");
@@ -20,10 +19,10 @@ export default function Listagem() {
 
   return (
     <>
-      {/* Passa setAnimais para InputPesquisa */}
       <InputPesquisa setAnimais={setAnimais} />
-      <div className="bg-[url('/img/fundo5.png')] bg-cover min-h-screenv mx-auto ">
-        <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+
+      <div className="bg-[url('/img/fundo5.png')] bg-cover min-h-screen flex flex-col items-center px-4 py-8">
+        <h1 className="mb-8 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center">
           Encontre{" "}
           <span className="underline underline-offset-3 decoration-8 decoration-orange-400 dark:decoration-orange-600">
             seu animal
@@ -31,10 +30,12 @@ export default function Listagem() {
         </h1>
 
         {cardSelecionado ? (
-          
-          <CardExpandido animal={cardSelecionado} onClose={() => setCardSelecionado(null)} />
+          <CardExpandido
+            animal={cardSelecionado}
+            onClose={() => setCardSelecionado(null)}
+          />
         ) : (
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap justify-center gap-6 w-full">
             {animais.length > 0 ? (
               animais.map((animal) => (
                 <CardAnimal
@@ -44,7 +45,9 @@ export default function Listagem() {
                 />
               ))
             ) : (
-              <p className="text-gray-500 text-center w-full">Nenhum animal encontrado</p>
+              <p className="text-gray-500 text-center w-full">
+                Nenhum animal encontrado
+              </p>
             )}
           </div>
         )}
