@@ -1,14 +1,12 @@
-import './Contato.css'
+
 import { useEffect, useState } from "react"
-// Update the import path to match the actual location and filename of ClienteContext
 import { useClienteStore } from "../context/ClienteContext"
 
 type ContatoType = {
   id: number
   mensagem: string
   resposta?: string
-  createdAt: string
-  updatedAt?: string
+  criadoEm: string
   animal: {
     id: number
     nome: string
@@ -29,9 +27,14 @@ export default function Contato() {
   useEffect(() => {
     async function buscaDados() {
       if (!cliente) return
-      const response = await fetch(`${apiUrl}/contatos/${cliente.id}`)
-      const dados = await response.json()
-      setContatos(dados)
+      try {
+        const response = await fetch(`${apiUrl}/contatos/${cliente.id}`)
+        if (!response.ok) throw new Error("Falha ao buscar contatos")
+        const dados = await response.json()
+        setContatos(dados)
+      } catch (err) {
+        console.error(err)
+      }
     }
     buscaDados()
   }, [cliente])
@@ -43,36 +46,10 @@ export default function Contato() {
     return `${dia}/${mes}/${ano}`
   }
 
-  const contatosTable = contatos.map(contato => (
-    <tr key={contato.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-      <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-        <p><b>{contato.animal.nome}</b></p>
-        <p className="mt-2">Raça: {contato.animal.raca} | Cidade: {contato.animal.cidade}</p>
-      </th>
-      <td className="px-6 py-4">
-        <img src={contato.animal.urlImagem} className="fotoAnimal" alt="Foto Animal" />
-      </td>
-      <td className="px-6 py-4">
-        <p><b>{contato.mensagem}</b></p>
-        <p><i>Enviado em: {dataDMA(contato.createdAt)}</i></p>
-      </td>
-      <td className="px-6 py-4">
-        {contato.resposta ? (
-          <>
-            <p><b>{contato.resposta}</b></p>
-            <p><i>Respondido em: {dataDMA(contato.updatedAt as string)}</i></p>
-          </>
-        ) : (
-          <i>Aguardando resposta...</i>
-        )}
-      </td>
-    </tr>
-  ))
-
   return (
     <section className="max-w-7xl mx-auto">
       <h1 className="mb-6 mt-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-4xl lg:text-5xl dark:text-white">
-        Histórico de <span className="underline underline-offset-3 decoration-8 decoration-orange-400 dark:decoration-orange-600">Meus Contatos</span>
+        Histórico de <span className="underline underline-offset-3 decoration-8 decoration-orange-400 dark:decoration-orange-600">Mensagens</span>
       </h1>
 
       {contatos.length === 0 ? (
@@ -90,7 +67,31 @@ export default function Contato() {
             </tr>
           </thead>
           <tbody>
-            {contatosTable}
+            {contatos.map(contato => (
+              <tr key={contato.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  <p className="font-extrabold text-lg">{contato.animal.nome}</p>
+                  <p className="mt-2">Raça: {contato.animal.raca} | Cidade: {contato.animal.cidade}</p>
+                </th>
+                <td className="px-6 py-4 w-50">
+                  <img src={contato.animal.urlImagem} className="fotoAnimal" alt="Foto Animal" />
+                </td>
+                <td className="px-6 py-4">
+                  <p><b>{contato.mensagem}</b></p>
+                  <p><i>Enviado em: {dataDMA(contato.criadoEm)}</i></p>
+                </td>
+                <td className="px-6 py-4">
+                  {contato.resposta ? (
+                    <>
+                      <p><b>{contato.resposta}</b></p>
+                      <p><i>Respondido em: {dataDMA(contato.criadoEm)}</i></p>
+                    </>
+                  ) : (
+                    <i>Aguardando resposta...</i>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       )}

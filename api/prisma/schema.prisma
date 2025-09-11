@@ -16,8 +16,11 @@ model Animal {
   tipo       TipoAnimal
   cidade     tipoCidade
   usuarioId  Int
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  contatos   Contato[]
+
 }
 
 
@@ -29,8 +32,21 @@ model Cliente {
   senha     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  contatos   Contato[]
+
 }
 
+model Contato {
+  id        Int      @id @default(autoincrement())
+  mensagem  String
+  criadoEm  DateTime @default(now())
+
+  clienteId Int
+  animalId  Int
+
+  cliente   Cliente  @relation(fields: [clienteId], references: [id])
+  animal    Animal   @relation(fields: [animalId], references: [id])
+}
 
 
 enum TipoAnimal {

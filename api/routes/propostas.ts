@@ -1,71 +1,48 @@
-import { PrismaClient } from "@prisma/client"
-import { Router } from "express"
+import { PrismaClient } from '@prisma/client'
+import { Router } from 'express'
 import { z } from 'zod'
 
 const prisma = new PrismaClient()
 const router = Router()
 
-const propostaSchema = z.object({
-  clienteId: z.string(),
-  carroId: z.number(),
-  descricao: z.string().min(10,
-    { message: "Descrição da Proposta deve possuir, no mínimo, 10 caracteres" }),
+// Validação com zod
+const contatoSchema = z.object({
+  mensagem: z.string().min(2, "Mensagem deve ter no mínimo 2 caracteres"),
+  clienteId: z.number().min(1, "Cliente inválido"),
+  animalId: z.number().min(1, "Animal inválido"),
 })
 
-router.get("/", async (req, res) => {
-  try {
-    const propostas = await prisma.proposta.findMany({
-      include: {
-        cliente: true,
-        carro: {
-          include: {
-            marca: true
-          }
-        }
-      },
-      orderBy: { id: 'desc'}
-    })
-    res.status(200).json(propostas)
-  } catch (error) {
-    res.status(400).json(error)
-  }
-})
-
+// Criar contato
 router.post("/", async (req, res) => {
-
-  const valida = propostaSchema.safeParse(req.body)
+  const valida = contatoSchema.safeParse(req.body)
   if (!valida.success) {
-    res.status(400).json({ erro: valida.error })
-    return
-  }  
-  const { clienteId, carroId, descricao } = valida.data
+    return res.status(400).json({ erro: valida.error.errors })
+  }
+
+  const { mensagem, clienteId, animalId } = valida.data
 
   try {
-    const proposta = await prisma.proposta.create({
-      data: { clienteId, carroId, descricao }
+    const contato = await prisma.contato.create({
+      data: { mensagem, clienteId, animalId }
     })
-    res.status(201).json(proposta)
+    res.status(201).json(contato)
   } catch (error) {
-    res.status(400).json(error)
+    res.status(500).json({ erro: error })
   }
 })
 
+// Listar mensagens de um cliente
 router.get("/:clienteId", async (req, res) => {
   const { clienteId } = req.params
   try {
-    const propostas = await prisma.proposta.findMany({
-      where: { clienteId },
-      include: {
-        carro: {
-          include: {
-            marca: true
-          }
-        }
-      }
+    const contatos = await prisma.contato.findMany({
+      where: { clienteId: Number(clienteId) },
+      include: { animal: true }, // já traz info do animal
+      orderBy: { criadoEm: 'desc' }
     })
-    res.status(200).json(propostas)
+    res.status(200).json(contatos)
   } catch (error) {
-    res.status(400).json(error)
+    res.status(500).json({ erro: error })
   }
 })
 

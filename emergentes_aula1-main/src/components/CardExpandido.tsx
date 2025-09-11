@@ -7,20 +7,38 @@ type Props = {
   onClose: () => void
 }
 
+const apiUrl = import.meta.env.VITE_API_URL
+
 export function CardExpandido({ animal, onClose }: Props) {
   const [mensagem, setMensagem] = useState("")
   const { cliente } = useClienteStore()
 
-  const handleEnviar = () => {
+  const handleEnviar = async () => {
     if (!cliente) {
       alert("Você precisa estar logado para enviar uma mensagem 🐾")
       return
     }
 
-    console.log("Mensagem enviada:", mensagem)
-    alert(`Mensagem enviada para o dono de ${animal.nome}: "${mensagem}"`)
-    setMensagem("")
-    onClose()
+    try {
+      const response = await fetch(`${apiUrl}/contatos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mensagem,
+          clienteId: cliente.id,
+          animalId: animal.id
+        })
+      })
+
+      if (!response.ok) throw new Error("Falha ao enviar mensagem")
+
+      alert(`Mensagem enviada para o dono de ${animal.nome}: "${mensagem}"`)
+      setMensagem("")
+      onClose()
+    } catch (err) {
+      console.error(err)
+      alert("Erro ao enviar a mensagem, tente novamente.")
+    }
   }
 
   const usuarioLogado = !!cliente

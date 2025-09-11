@@ -6,6 +6,7 @@ import routesAnimais from './routes/animais'
 import routesPesquisa from './routes/pesquisa'
 import routesClientes from './routes/clientes'
 import routesLogin from './routes/login'
+import routesContatos from './routes/propostas'
 
 const app = express()
 const port = 3000
@@ -19,6 +20,7 @@ app.use("/pesquisa", routesPesquisa)
 app.use("/clientes", routesClientes)
 app.use("/login", routesLogin)
 app.use("/clientes/login", routesLogin)
+app.use("/contatos", routesContatos)
 
 
 app.get('/', (req, res) => {
