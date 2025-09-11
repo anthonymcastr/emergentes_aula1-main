@@ -36,7 +36,7 @@ export function InputPesquisa({ setAnimais }: Props) {
             type="search"
             value={termo}
             onChange={(e) => setTermo(e.target.value)}
-            placeholder="Informe a raça, tipo ou cidade"
+            placeholder="Informe o tipo que você busca.."
             className="w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-2xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-200 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
           />
           <button
