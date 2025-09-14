@@ -1,21 +1,48 @@
-import { useEffect, useState } from "react";
-import type { Animal } from "../utils/animalType";
-import { CardAnimal } from "../components/CardAnimal";
-import { CardExpandido } from "../components/CardExpandido";
-import { InputPesquisa } from "../components/InputPesquisa";
+import { useEffect, useState } from "react"
+import type { Animal } from "../utils/animalType"
+import { CardAnimal } from "../components/CardAnimal"
+import { CardExpandido } from "../components/CardExpandido"
+import { InputPesquisa } from "../components/InputPesquisa"
+import { useClienteStore } from "../context/ClienteContext"
 
 export default function Listagem() {
-  const [animais, setAnimais] = useState<Animal[]>([]);
-  const [cardSelecionado, setCardSelecionado] = useState<Animal | null>(null);
+  const [animais, setAnimais] = useState<Animal[]>([])
+  const [cardSelecionado, setCardSelecionado] = useState<Animal | null>(null)
+  const { cliente } = useClienteStore()
+  const isAdmin = cliente?.role === "admin"
+
+  const buscaDados = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/animais`)
+      const dados = await response.json()
+      setAnimais(dados)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   useEffect(() => {
-    async function buscaDados() {
-      const response = await fetch("http://localhost:3000/animais");
-      const dados = await response.json();
-      setAnimais(dados);
+    buscaDados()
+  }, [])
+
+  const handleExcluido = (id: number) => {
+    setAnimais((prev) => prev.filter((animal) => animal.id !== id))
+  }
+
+  const excluirAnimal = async (id: number) => {
+    if (!confirm("Deseja realmente excluir este animal?")) return
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/animais/${id}`, {
+        method: "DELETE",
+      })
+      if (!response.ok) throw new Error("Erro ao excluir")
+      alert("Animal excluído com sucesso!")
+      handleExcluido(id)
+    } catch (err) {
+      console.error(err)
+      alert("Erro ao excluir o animal")
     }
-    buscaDados();
-  }, []);
+  }
 
   return (
     <>
@@ -33,6 +60,7 @@ export default function Listagem() {
           <CardExpandido
             animal={cardSelecionado}
             onClose={() => setCardSelecionado(null)}
+            onExcluido={() => cardSelecionado && handleExcluido(cardSelecionado.id)}
           />
         ) : (
           <div className="flex flex-wrap justify-center gap-6 w-full">
@@ -42,6 +70,8 @@ export default function Listagem() {
                   data={animal}
                   key={animal.id}
                   onFazerContato={() => setCardSelecionado(animal)}
+                  isAdmin={isAdmin}
+                  onExcluir={excluirAnimal}
                 />
               ))
             ) : (
@@ -53,5 +83,5 @@ export default function Listagem() {
         )}
       </div>
     </>
-  );
+  )
 }

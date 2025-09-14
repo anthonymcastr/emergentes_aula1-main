@@ -5,16 +5,20 @@ import { useClienteStore } from "../context/ClienteContext"
 type Props = {
   animal: Animal
   onClose: () => void
+  onExcluido?: () => void // callback quando o admin excluir
 }
 
 const apiUrl = import.meta.env.VITE_API_URL
 
-export function CardExpandido({ animal, onClose }: Props) {
+export function CardExpandido({ animal, onClose, onExcluido }: Props) {
   const [mensagem, setMensagem] = useState("")
   const { cliente } = useClienteStore()
 
+  const usuarioLogado = !!cliente
+  const isAdmin = cliente?.role === "admin"
+
   const handleEnviar = async () => {
-    if (!cliente) {
+    if (!usuarioLogado) {
       alert("Você precisa estar logado para enviar uma mensagem 🐾")
       return
     }
@@ -41,7 +45,21 @@ export function CardExpandido({ animal, onClose }: Props) {
     }
   }
 
-  const usuarioLogado = !!cliente
+  const handleExcluir = async () => {
+    if (!confirm("Deseja realmente excluir este animal?")) return
+    try {
+      const response = await fetch(`${apiUrl}/animais/${animal.id}`, {
+        method: "DELETE",
+      })
+      if (!response.ok) throw new Error("Erro ao excluir")
+      alert("Animal excluído com sucesso!")
+      onExcluido?.() // chama callback do Listagem
+      onClose()       // fecha o card
+    } catch (err) {
+      console.error(err)
+      alert("Erro ao excluir o animal")
+    }
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
@@ -62,11 +80,7 @@ export function CardExpandido({ animal, onClose }: Props) {
         <textarea
           value={mensagem}
           onChange={(e) => setMensagem(e.target.value)}
-          placeholder={
-            usuarioLogado
-              ? "Escreva sua mensagem..."
-              : "Faça login para entrar em contato"
-          }
+          placeholder={usuarioLogado ? "Escreva sua mensagem..." : "Faça login para entrar em contato"}
           className="w-full mt-4 p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           rows={4}
           disabled={!usuarioLogado}
@@ -83,6 +97,15 @@ export function CardExpandido({ animal, onClose }: Props) {
         >
           {usuarioLogado ? "Enviar" : "Login necessário"}
         </button>
+
+        {isAdmin && (
+          <button
+            onClick={handleExcluir}
+            className="mt-4 w-full rounded-lg py-2 bg-red-600 hover:bg-red-700 text-white"
+          >
+            Excluir Animal (Admin)
+          </button>
+        )}
       </div>
     </div>
   )

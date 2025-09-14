@@ -76,7 +76,7 @@ export default function Titulo() {
                 <li>
                   <Link
                     to="/contato"
-                    className="block py-2 px-3 hover:font-bold text-white md:p-0.5 md:hover:font-bold "
+                    className="block py-2 px-3 hover:font-bold text-white md:p-0  md:hover:font-bold "
                     onClick={() => setMenuAberto(false)}
                   >
                     Minhas Mensagens

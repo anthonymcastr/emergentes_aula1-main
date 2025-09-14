@@ -1,6 +1,7 @@
 import { PrismaClient, TipoAnimal, tipoCidade } from '@prisma/client'
 import { Router } from 'express'
 import { z } from 'zod'
+import { autentica, AuthRequest } from "../middleware/autentica";
 
 const prisma = new PrismaClient()
 const router = Router()
@@ -95,36 +96,51 @@ router.post("/", async (req, res) => {
 })
 
 
-router.put("/:id", async (req, res) => {
-  const { id } = req.params
-  const valida = animalSchema.safeParse(req.body)
-  if (!valida.success) return res.status(400).json({ erro: valida.error.errors })
+router.put("/:id", autentica, async (req: AuthRequest, res) => {
+  const { id } = req.params;
+  const valida = animalSchema.safeParse(req.body);
+  if (!valida.success) return res.status(400).json({ erro: valida.error.errors });
 
-  const { nome, idade, raca, urlImagem, tipo, cidade, usuarioId } = valida.data
+  const { nome, idade, raca, urlImagem, tipo, cidade, usuarioId } = valida.data;
 
   try {
-    const animal = await prisma.animal.update({
+    const animal = await prisma.animal.findUnique({ where: { id: Number(id) } });
+
+    if (!animal) return res.status(404).json({ erro: "Animal não encontrado" });
+
+    if (req.user?.role !== "admin" && animal.usuarioId !== req.user?.id) {
+      return res.status(403).json({ erro: "Você não tem permissão para editar este animal." });
+    }
+
+    const atualizado = await prisma.animal.update({
       where: { id: Number(id) },
       data: { nome, idade, raca, urlImagem, tipo, cidade, usuarioId }
-    })
-    res.status(200).json(animal)
+    });
+
+    res.status(200).json(atualizado);
   } catch (error) {
-    res.status(400).json({ error })
+    res.status(400).json({ erro: "Erro ao atualizar animal" });
   }
-})
+});
 
 
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params
+
+router.delete("/:id", autentica, async (req: AuthRequest, res) => {
+  const { id } = req.params;
+
+  if (req.user?.role !== "admin") {
+    return res.status(403).json({ erro: "Apenas administradores podem excluir animais." });
+  }
+
   try {
     const animal = await prisma.animal.delete({
       where: { id: Number(id) }
-    })
-    res.status(200).json(animal)
+    });
+    res.status(200).json({ mensagem: "Animal excluído com sucesso", animal });
   } catch (error) {
-    res.status(400).json({ error })
+    res.status(400).json({ erro: "Erro ao excluir animal" });
   }
-})
+});
 
 
 

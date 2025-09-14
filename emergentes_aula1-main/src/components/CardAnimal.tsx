@@ -3,9 +3,11 @@ import type { Animal } from "../utils/animalType.ts"
 type CardAnimalProps = {
   data: Animal;
   onFazerContato?: () => void;
+  onExcluir?: (id: number) => void; // nova prop para admin
+  isAdmin?: boolean;
 };
 
-export function CardAnimal({ data, onFazerContato }: CardAnimalProps) {
+export function CardAnimal({ data, onFazerContato, onExcluir, isAdmin }: CardAnimalProps) {
   const tipoCor = {
     perdido: "text-red-600 font-bold",
     encontrado: "text-green-600 font-bold",
@@ -28,25 +30,19 @@ export function CardAnimal({ data, onFazerContato }: CardAnimalProps) {
 
         <button
           onClick={onFazerContato}
-          className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 mt-2"
         >
           Fazer contato
-          <svg
-            className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 14 10"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M1 5h12m0 0L9 1m4 4L9 9"
-            />
-          </svg>
         </button>
+
+        {isAdmin && onExcluir && (
+          <button
+            onClick={() => onExcluir(data.id)}
+            className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 mt-2 ml-2"
+          >
+            Excluir
+          </button>
+        )}
       </div>
     </div>
   );

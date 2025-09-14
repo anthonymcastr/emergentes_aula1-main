@@ -3,51 +3,45 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" 
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Animal {
-  id         Int     @id @default(autoincrement())
-  nome       String
-  idade      Int
-  raca       String
-  urlImagem  String
-  tipo       TipoAnimal
-  cidade     tipoCidade
-  usuarioId  Int
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  contatos   Contato[]
-
+  id        Int        @id @default(autoincrement())
+  nome      String
+  idade     Int
+  raca      String
+  urlImagem String
+  tipo      TipoAnimal
+  cidade    tipoCidade
+  usuarioId Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  contatos  Contato[]
 }
 
-
 model Cliente {
-  id        Int     @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   nome      String
-  email     String  @unique
+  email     String    @unique
   telefone  String
   senha     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  contatos   Contato[]
-
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  role      String    @default("user")
+  contatos  Contato[]
 }
 
 model Contato {
   id        Int      @id @default(autoincrement())
   mensagem  String
   criadoEm  DateTime @default(now())
-
   clienteId Int
   animalId  Int
-
-  cliente   Cliente  @relation(fields: [clienteId], references: [id])
   animal    Animal   @relation(fields: [animalId], references: [id])
+  cliente   Cliente  @relation(fields: [clienteId], references: [id])
 }
-
 
 enum TipoAnimal {
   ADOCAO
