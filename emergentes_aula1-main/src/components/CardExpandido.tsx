@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { Animal } from "../utils/animalType"
+import type { Animal } from "../utils/AnimalType"
 import { useClienteStore } from "../context/ClienteContext"
 
 type Props = {

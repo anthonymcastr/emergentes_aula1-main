@@ -1,4 +1,4 @@
-import type { AnimalType } from "./animalType"
+import type { AnimalType } from "./AnimalType"
 
 export type PropostaType = {
   id: number

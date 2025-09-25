@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import type { Animal } from "../utils/animalType"
+import type { Animal } from "../utils/AnimalType"
 import { CardAnimal } from "../components/CardAnimal"
 import { CardExpandido } from "../components/CardExpandido"
 import { InputPesquisa } from "../components/InputPesquisa"
