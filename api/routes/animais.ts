@@ -126,21 +126,25 @@ router.put("/:id", autentica, async (req: AuthRequest, res) => {
 
 
 router.delete("/:id", autentica, async (req: AuthRequest, res) => {
-  const { id } = req.params;
+  console.log("Headers:", req.headers)
+  console.log("User:", req.user)
+  console.log("ID a deletar:", req.params.id)
 
   if (req.user?.role !== "admin") {
     return res.status(403).json({ erro: "Apenas administradores podem excluir animais." });
   }
 
   try {
-    const animal = await prisma.animal.delete({
-      where: { id: Number(id) }
+    await prisma.animal.delete({
+      where: { id: Number(req.params.id) }
     });
-    res.status(200).json({ mensagem: "Animal excluído com sucesso", animal });
+    res.status(200).json({ mensagem: "Animal excluído com sucesso" });
   } catch (error) {
+    console.error("Erro Prisma:", error)
     res.status(400).json({ erro: "Erro ao excluir animal" });
   }
 });
+
 
 
 

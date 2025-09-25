@@ -8,9 +8,12 @@ import Listagem from './routes/Listagem.tsx'
 import Sobre from './routes/Sobre.tsx'
 import Login from './routes/Login.tsx'
 import Contato from './routes/Contato.tsx'
+import LoginAdmin from './Admin/login-admin.tsx'
+import Admin from './Admin/Admin.tsx'
 
 import Layout from './Layout.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+
 
 const rotas = createBrowserRouter([
   {
@@ -22,7 +25,9 @@ const rotas = createBrowserRouter([
       { path: 'listagem', element: <Listagem /> },
       { path: 'sobre', element: <Sobre /> },
       { path: 'login', element: <Login />},
-      { path: 'contato', element: <Contato />}
+      { path: 'contato', element: <Contato />},
+      { path: 'login-admin', element: <LoginAdmin />},
+      { path: 'admin', element: <Admin />}
       
     ],
   },

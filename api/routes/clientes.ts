@@ -26,7 +26,7 @@ router.get("/", async (req, res) => {
 })
 
 // ---------------------------
-// CADASTRO DE CLIENTE
+// CADASTRO DE CLIENTE COMUM
 router.post("/cadastro", async (req, res) => {
   try {
     const parseResult = clienteSchema.safeParse(req.body)
@@ -36,26 +36,24 @@ router.post("/cadastro", async (req, res) => {
 
     const { nome, email, senha, telefone } = parseResult.data
 
-    // Verifica se o email já existe
     const existente = await prisma.cliente.findUnique({ where: { email } })
     if (existente) return res.status(400).json({ error: "E-mail já cadastrado" })
 
-    // Valida a senha
     const errosSenha = validaSenha(senha)
     if (errosSenha.length > 0) return res.status(400).json({ error: errosSenha.join(", ") })
 
-    // Criptografa a senha
     const hash = await bcrypt.hash(senha, 10)
 
     const cliente = await prisma.cliente.create({
-      data: { nome, email, senha: hash, telefone }
+      data: { nome, email, senha: hash, telefone, role: "USER" }
     })
 
     res.status(201).json({
       id: cliente.id,
       nome: cliente.nome,
       email: cliente.email,
-      telefone: cliente.telefone
+      telefone: cliente.telefone,
+      role: cliente.role
     })
   } catch (error) {
     console.error(error)
@@ -76,12 +74,12 @@ router.post("/login", async (req, res) => {
     const senhaValida = await bcrypt.compare(senha, cliente.senha)
     if (!senhaValida) return res.status(401).json({ error: "E-mail ou senha incorretos" })
 
-    // Retorna apenas dados públicos
     res.status(200).json({
       id: cliente.id,
       nome: cliente.nome,
       email: cliente.email,
-      telefone: cliente.telefone
+      telefone: cliente.telefone,
+      role: cliente.role
     })
   } catch (error) {
     console.error(error)

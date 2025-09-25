@@ -43,6 +43,16 @@ model Contato {
   cliente   Cliente  @relation(fields: [clienteId], references: [id])
 }
 
+model Admin {
+  id        Int       @id @default(autoincrement())
+  nome      String
+  email     String    @unique
+  senha     String
+  role      String    @default("admin")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 enum TipoAnimal {
   ADOCAO
   PERDIDO

@@ -3,13 +3,13 @@ import type { Animal } from "../utils/AnimalType"
 import { CardAnimal } from "../components/CardAnimal"
 import { CardExpandido } from "../components/CardExpandido"
 import { InputPesquisa } from "../components/InputPesquisa"
-import { useClienteStore } from "../context/ClienteContext"
+import { useAdminStore } from "../Admin/context/AdminContext" // ⬅️ agora admin
 
 export default function Listagem() {
   const [animais, setAnimais] = useState<Animal[]>([])
   const [cardSelecionado, setCardSelecionado] = useState<Animal | null>(null)
-  const { cliente } = useClienteStore()
-  const isAdmin = cliente?.role === "admin"
+  const { admin } = useAdminStore() // ⬅️ pegamos admin do contexto
+  const isAdmin = admin?.role === "admin"
 
   const buscaDados = async () => {
     try {
@@ -31,11 +31,25 @@ export default function Listagem() {
 
   const excluirAnimal = async (id: number) => {
     if (!confirm("Deseja realmente excluir este animal?")) return
+
     try {
+      const token = admin?.token // ⬅️ pega token do admin
+
+      if (!token) {
+        alert("Você precisa estar logado como administrador para excluir")
+        return
+      }
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/animais/${id}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
       })
+
       if (!response.ok) throw new Error("Erro ao excluir")
+
       alert("Animal excluído com sucesso!")
       handleExcluido(id)
     } catch (err) {
