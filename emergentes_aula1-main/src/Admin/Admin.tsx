@@ -3,7 +3,6 @@ export default function Admin() {
     <div>
       <h1>Página Admin</h1>
       <p>Bem-vindo, administrador!</p>
-      {/* Conteúdo exclusivo para admins */}
     </div>
   )
 }

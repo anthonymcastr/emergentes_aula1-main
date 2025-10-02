@@ -37,9 +37,9 @@ export default function LoginAdmin() {
         return
       }
 
-      logaAdmin(dados) // ⬅️ agora salva admin no localStorage e contexto de admin
+      logaAdmin(dados) // 
       toast.success(`Bem-vindo, administrador ${dados.nome}!`)
-      navigate("/admin") // redireciona para a dashboard admin
+      navigate("/admin") 
     } catch (err) {
       console.error(err)
       toast.error("Erro ao conectar com o servidor")
@@ -48,12 +48,15 @@ export default function LoginAdmin() {
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900 min-h-screen">
-      <div className="flex flex-col items-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+      <div className="flex flex-col items-center px-6 py-4 mx-auto md:h-screen lg:py-0">
+        <div className="w-full mt-5 bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Login de Administrador
             </h1>
+            <div>
+              <img className="w-60 mx-auto" src="./public/img/gato_admin.png" alt="Gato com capacete de trabalhador" />
+            </div>
             <form className="space-y-4" onSubmit={handleSubmit(verificaLogin)}>
               <div>
                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">

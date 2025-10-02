@@ -1,16 +1,21 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useClienteStore } from "../context/ClienteContext";
 import { useState } from "react";
+import { useAdminStore } from "../Admin/context/AdminContext";
 
 export default function Titulo() {
   const { cliente, deslogaCliente } = useClienteStore();
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
+  const { admin, deslogaAdmin } = useAdminStore();
 
   function handleLogout() {
     deslogaCliente();
+    deslogaAdmin();
     navigate("/login");
   }
+
+
 
   const toggleMenu = () => setMenuAberto(!menuAberto);
 
@@ -52,7 +57,7 @@ export default function Titulo() {
               </Link>
             </li>
 
-            {!cliente ? (
+            {!admin && !cliente ? (
               <li>
                 <Link
                   to="/login"
@@ -105,7 +110,7 @@ export default function Titulo() {
               </Link>
             </li>
 
-            {cliente && (
+            { (cliente || admin) && (
               <li>
                 <button
                   onClick={() => {
