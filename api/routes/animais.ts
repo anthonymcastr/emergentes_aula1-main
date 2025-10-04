@@ -163,4 +163,18 @@ router.post("/bulk", async (req, res) => {
 });
 
 
+router.get("/animais/resumo", async (req, res) => {
+  try {
+    const adocao = await prisma.animal.count({ where: { tipo: TipoAnimal.ADOCAO } });
+    const perdido = await prisma.animal.count({ where: { tipo: TipoAnimal.PERDIDO } });
+    const encontrado = await prisma.animal.count({ where: { tipo: TipoAnimal.ENCONTRADO } });
+
+    res.json({ adocao, perdido, encontrado });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: err });
+  }
+});
+
+
 export default router

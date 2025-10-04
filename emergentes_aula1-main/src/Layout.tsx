@@ -1,5 +1,5 @@
-import Titulo from './components/Titulo.tsx'
-import { Outlet } from 'react-router-dom'
+import { Outlet } from "react-router-dom";
+import Titulo from "./components/Titulo";
 
 export default function Layout() {
   return (
@@ -7,5 +7,5 @@ export default function Layout() {
       <Titulo />
       <Outlet />
     </>
-  )
+  );
 }
