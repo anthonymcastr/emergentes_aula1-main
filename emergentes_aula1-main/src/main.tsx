@@ -35,7 +35,8 @@ const rotas = createBrowserRouter([
     element: <AdminLayout />, // sem Titulo, com sidebar
     children: [
       { index: true, element: <Admin /> },
-      { path: 'listagem', element: <Listagem /> }
+      { path: 'listagem', element: <Listagem /> },
+      { path: 'contato', element: <Contato />}
       // você pode adicionar outras páginas do admin aqui no futuro
     ],
   },

@@ -15,14 +15,19 @@ type AdminStore = {
   deslogaAdmin: () => void
 }
 
-export const useAdminStore = create<AdminStore>((set) => ({
-  admin: null,
-  logaAdmin: (admin) => {
-    localStorage.setItem("admin", JSON.stringify(admin))
-    set({ admin })
-  },
-  deslogaAdmin: () => {
-    localStorage.removeItem("admin")
-    set({ admin: null })
+export const useAdminStore = create<AdminStore>((set) => {
+  const adminFromStorage = localStorage.getItem("admin")
+  const parsedAdmin = adminFromStorage ? JSON.parse(adminFromStorage) : null
+
+  return {
+    admin: parsedAdmin,
+    logaAdmin: (admin) => {
+      localStorage.setItem("admin", JSON.stringify(admin))
+      set({ admin })
+    },
+    deslogaAdmin: () => {
+      localStorage.removeItem("admin")
+      set({ admin: null })
+    }
   }
-}))
+})

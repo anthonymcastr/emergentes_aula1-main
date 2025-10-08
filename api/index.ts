@@ -9,7 +9,7 @@ import routesLogin from './routes/login'
 import routesContatos from './routes/propostas'
 import routesLoginAdmin from './routes/login-admin'
 import routesAdmins from './routes/admins'
-
+import propostasAdmin from './routes/propostasAdmin'
 
 const app = express()
 const port = 3000
@@ -27,6 +27,7 @@ app.use("/contatos", routesContatos)
 app.use("/clientes/contatos", routesContatos)
 app.use("/login-admin", routesLoginAdmin)
 app.use("/admins", routesAdmins)
+app.use("/contatos", propostasAdmin)
 
 
 

@@ -32,12 +32,20 @@ router.post("/", async (req, res) => {
 })
 
 // Listar mensagens de um cliente
+// Listar mensagens de um cliente (quem enviou)
 router.get("/:clienteId", async (req, res) => {
   const { clienteId } = req.params
   try {
     const contatos = await prisma.contato.findMany({
       where: { clienteId: Number(clienteId) },
-      include: { animal: true }, // já traz info do animal
+      include: {
+        animal: {
+          include: {
+            usuario: true, // <- pega o dono do animal (destinatário)
+          }
+        },
+        cliente: true, // <- quem enviou a mensagem
+      },
       orderBy: { criadoEm: 'desc' }
     })
     res.status(200).json(contatos)
@@ -45,5 +53,6 @@ router.get("/:clienteId", async (req, res) => {
     res.status(500).json({ erro: error })
   }
 })
+
 
 export default router

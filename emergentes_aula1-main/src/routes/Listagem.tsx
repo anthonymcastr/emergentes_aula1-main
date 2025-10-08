@@ -3,12 +3,12 @@ import type { Animal } from "../utils/AnimalType"
 import { CardAnimal } from "../components/CardAnimal"
 import { CardExpandido } from "../components/CardExpandido"
 import { InputPesquisa } from "../components/InputPesquisa"
-import { useAdminStore } from "../Admin/context/AdminContext" // ⬅️ agora admin
+import { useAdminStore } from "../Admin/context/AdminContext" 
 
 export default function Listagem() {
   const [animais, setAnimais] = useState<Animal[]>([])
   const [cardSelecionado, setCardSelecionado] = useState<Animal | null>(null)
-  const { admin } = useAdminStore() // ⬅️ pegamos admin do contexto
+  const { admin } = useAdminStore() // 
   const isAdmin = admin?.role === "admin"
 
   const buscaDados = async () => {
@@ -33,7 +33,7 @@ export default function Listagem() {
     if (!confirm("Deseja realmente excluir este animal?")) return
 
     try {
-      const token = admin?.token // ⬅️ pega token do admin
+      const token = admin?.token 
 
       if (!token) {
         alert("Você precisa estar logado como administrador para excluir")

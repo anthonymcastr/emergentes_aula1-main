@@ -16,10 +16,13 @@ model Animal {
   tipo      TipoAnimal
   cidade    tipoCidade
   usuarioId Int
+  usuario   Cliente    @relation(fields: [usuarioId], references: [id]) // RELAÇÃO PADRÃO
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   contatos  Contato[]
 }
+
+
 
 model Cliente {
   id        Int       @id @default(autoincrement())
@@ -31,7 +34,10 @@ model Cliente {
   updatedAt DateTime  @updatedAt
   role      String    @default("user")
   contatos  Contato[]
+  animais   Animal[]  // NÃO precisa do @relation com nome aqui
 }
+
+
 
 model Contato {
   id        Int      @id @default(autoincrement())
