@@ -44,8 +44,8 @@ model Contato {
   mensagem  String
   criadoEm  DateTime @default(now())
   clienteId Int
-  animalId  Int
-  animal    Animal   @relation(fields: [animalId], references: [id])
+  animalId  Int?
+  animal    Animal?   @relation(fields: [animalId], references: [id], onDelete: SetNull)
   cliente   Cliente  @relation(fields: [clienteId], references: [id])
 }
 

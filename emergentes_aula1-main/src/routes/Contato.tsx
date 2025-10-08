@@ -72,20 +72,23 @@ export default function Contato() {
   }
 
   // Agrupamento para admin
-  const grupos = admin?.role === "admin"
-    ? contatos.reduce((acc, contato) => {
-        const key = `${contato.cliente.id}-${contato.animal.id}`
-        if (!acc[key]) {
-          acc[key] = {
-            cliente: contato.cliente,
-            animal: contato.animal,
-            mensagens: []
-          }
+const grupos = admin?.role === "admin"
+  ? contatos.reduce((acc, contato) => {
+      if (!contato.animal) return acc // ignora se animal for null
+
+      const key = `${contato.cliente.id}-${contato.animal.id}`
+      if (!acc[key]) {
+        acc[key] = {
+          cliente: contato.cliente,
+          animal: contato.animal,
+          mensagens: []
         }
-        acc[key].mensagens.push(contato)
-        return acc
-      }, {} as Record<string, { cliente: ContatoType["cliente"]; animal: ContatoType["animal"]; mensagens: ContatoType[] }>)
-    : null
+      }
+      acc[key].mensagens.push(contato)
+      return acc
+    }, {} as Record<string, { cliente: ContatoType["cliente"]; animal: ContatoType["animal"]; mensagens: ContatoType[] }>)
+  : null
+
 
   if (admin?.role === "admin") {
     return (
@@ -120,7 +123,7 @@ export default function Contato() {
             {grupos && grupos[grupoSelecionado] && (
               <>
                 <h2 className="text-2xl font-bold mb-2">
-                  Conversa entre {grupos[grupoSelecionado].cliente.nome}
+                  Mensagem de {grupos[grupoSelecionado].cliente.nome}
                 </h2>
 
                 <p className="text-sm mb-2 text-gray-700">
