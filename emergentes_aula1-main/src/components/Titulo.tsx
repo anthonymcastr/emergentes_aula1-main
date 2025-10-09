@@ -117,7 +117,7 @@ export default function Titulo() {
                     handleLogout();
                     setMenuAberto(false);
                   }}
-                  className="block py-2 px-3 text-white hover:font-bold rounded-sm md:bg-transparent md:p-0 md:hover:font-extrabold md:hover:text-red-500 md:hover:cursor-pointer" 
+                  className="block py-2 px-3 text-white hover:font-bold rounded-sm md:bg-transparent md:p-0 md:hover:font-extrabold  md:hover:cursor-pointer" 
                 >
                   Sair
                 </button>
