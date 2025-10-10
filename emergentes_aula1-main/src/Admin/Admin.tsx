@@ -36,16 +36,31 @@ export default function Admin() {
 
         {dados ? (
           <VictoryPie
-            data={data}
-            colorScale={["#4ade80", "#facc15", "#f87171"]}
-            labels={({ datum }) => `${datum.x}: ${datum.y}`}
-            style={{
-              labels: { fontSize: 5, fill: "#333" },
-            }}
-            height={150}
-            width={150}
-            padding={{ top: 20, bottom: 60, left: 60, right: 60 }}
-          />
+  data={data}
+  colorScale={["#86efac", "#fde68a", "#fca5a5"]} // Cores pastel
+  labels={({ datum }) => `${datum.x}: ${datum.y}`}
+  labelPosition="centroid"
+  style={{
+    labels: {
+      fontSize: 10,
+      fill: "#4b5563", // Gray-700
+      fontWeight: "bold",
+    },
+    data: {
+      stroke: "#fff",
+      strokeWidth: 2,
+    },
+  }}
+  innerRadius={30} // efeito de donut chart
+  height={200}
+  width={200}
+  padding={{ top: 20, bottom: 60, left: 60, right: 60 }}
+  animate={{
+    duration: 800,
+    easing: "bounce",
+  }}
+/>
+
         ) : (
           <p className="text-gray-500">Carregando gráfico...</p>
         )}
