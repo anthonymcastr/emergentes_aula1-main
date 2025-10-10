@@ -3,7 +3,7 @@ import React from 'react';
 const Sobre: React.FC = () => {
     return (
         <>
-        <div className="max-w-2xl mx-auto p-6 mt-10 bg-white rounded-lg shadow-md">
+        <div className="max-w-2xl mx-auto p-6 mt-10 ">
             <h1 className="text-3xl font-bold mb-4 text-blue-700">Sobre o Aplicativo</h1>
             <p className="mb-4 text-gray-700">
                 Este aplicativo foi desenvolvido para auxiliar na busca por pets perdidos na sua cidade.
@@ -26,16 +26,18 @@ const Sobre: React.FC = () => {
                 Nosso objetivo é conectar pessoas e promover o bem-estar dos animais, tornando a busca por pets perdidos mais eficiente e oferecendo suporte completo para os cuidados diários.
             </p>
         </div>
-<footer>
-    <div className="mx-auto p-2 mt-10 bg-gray-100 rounded-lg shadow-md">
+<footer className='max-w-2xl mx-auto p-6 mt-10'>
+    <div className="mx-auto p-2 mt-10 shadow-md">
         <h2 className="text-2xl font-bold mb-4 text-blue-700">Contato</h2>
         <p className="mb-2 text-gray-700">
-            Se você tiver alguma dúvida ou sugestão, sinta-se à vontade para entrar em contato conosco:
+            Se você tiver alguma dúvida ou sugestão, sinta-se à vontade para entrar em contato:
         </p>
-        <ul className="list-disc list-inside mb-4 text-gray-700">
-            <li>Email: anthonymartins19977@gmail.com</li>
-            <li>Telefone: (53) 99170-6490</li>
-        </ul>
+            <div><strong>Email:</strong> anthonymartins19977@gmail.com</div>
+            <div className='flex items-center'>
+                <p><strong>(53) 98170-6490</strong> ou Clique no logo ao lado</p>
+                <a href="https://w.app/petpelrs"><img className='h-20' src="/img/logozap.png" alt="Logo Whatsapp" /> </a>
+            </div>
+        
     </div>
 </footer>
         </>

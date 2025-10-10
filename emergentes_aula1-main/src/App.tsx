@@ -12,7 +12,7 @@ export default function App() {
         <div className="inline-flex items-center justify-center px-5 py-3 ">
            <img
               src="/img/logo_petpel.png"
-              className="h-100 "
+              className="md:h-100"
               alt="Logo Petpel"
             />
         </div>
