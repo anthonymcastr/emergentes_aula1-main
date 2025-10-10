@@ -55,7 +55,7 @@ export default function LoginAdmin() {
               Login de Administrador
             </h1>
             <div>
-              <img className="w-60 mx-auto" src="./public/img/gato_admin.png" alt="Gato com capacete de trabalhador" />
+              <img className="w-60 mx-auto" src="/img/gato_admin.png" alt="Gato com capacete de trabalhador" />
             </div>
             <form className="space-y-4" onSubmit={handleSubmit(verificaLogin)}>
               <div>
