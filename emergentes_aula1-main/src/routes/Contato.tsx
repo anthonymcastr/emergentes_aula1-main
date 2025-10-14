@@ -41,7 +41,7 @@ export default function Contato() {
   useEffect(() => {
     async function buscaDados() {
       try {
-        let headers = {}
+        
 
         // Admin: busca todos
         if (admin?.role === "admin") {
