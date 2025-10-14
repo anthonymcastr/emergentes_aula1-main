@@ -1,4 +1,4 @@
-import type { Animal } from "../utils/AnimalType.ts"
+import type { Animal } from "../utils/AnimalType.ts";
 
 type CardAnimalProps = {
   data: Animal;
@@ -8,11 +8,19 @@ type CardAnimalProps = {
 };
 
 export function CardAnimal({ data, onFazerContato, onExcluir, isAdmin }: CardAnimalProps) {
-  const tipoCor = {
-    perdido: "text-red-600 font-bold",
-    encontrado: "text-green-600 font-bold",
-    adocao: "text-blue-600 font-bold"
-  }[data.tipo.toLowerCase()] || "text-gray-600";
+  // Mapeia o enum para nome amigável com acento
+  const tipoLabels: Record<string, string> = {
+    ADOCAO: "ADOÇÃO",
+    PERDIDO: "PERDIDO",
+    ENCONTRADO: "ENCONTRADO",
+  };
+
+  // Usa a chave exatamente como vem no enum (maiúscula)
+ const tipoCor = {
+  PERDIDO: "text-red-600 font-bold",
+  ENCONTRADO: "text-green-600 font-bold",
+  ADOCAO: "text-blue-600 font-bold",
+}[data.tipo.toUpperCase()] || "text-gray-600";
 
   return (
     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
@@ -24,7 +32,9 @@ export function CardAnimal({ data, onFazerContato, onExcluir, isAdmin }: CardAni
         <h4 className="mb-2 font-bold tracking-tight text-gray-900 dark:text-white">
           Idade: {data.idade} anos
         </h4>
-        <p className={`mb-2 font-extrabold ${tipoCor}`}>Tipo: {data.tipo}</p>
+        <p className={`mb-2 font-extrabold ${tipoCor}`}>
+          Tipo: {tipoLabels[data.tipo] || data.tipo}
+        </p>
         <p className={`mb-2 font-bold`}>Raça: {data.raca}</p>
         <p className={`mb-2 font-bold`}>Cidade: {data.cidade}</p>
 

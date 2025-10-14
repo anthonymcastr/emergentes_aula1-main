@@ -7,36 +7,31 @@ function isTipoAnimal(value: string): value is TipoAnimal {
   return Object.values(TipoAnimal).includes(value as TipoAnimal);
 }
 
-router.get('/', async (req, res) => {
-  const termo = (req.query.termo as string)?.trim();
+const termoMap: Record<string, TipoAnimal> = {
+  ADOCAO: TipoAnimal.ADOCAO,
+  PERDIDO: TipoAnimal.PERDIDO,
+  ENCONTRADO: TipoAnimal.ENCONTRADO,
+};
 
-  if (!termo) {
+router.get('/', async (req, res) => {
+  const termoOriginal = (req.query.termo as string)?.trim();
+
+  if (!termoOriginal) {
     return res.status(400).json({ erro: 'O termo de busca é obrigatório.' });
   }
 
-  const filtros: any[] = [];
-
-  
-  filtros.push({
-    raca: {
-      contains: termo,
-      mode: 'insensitive',
-    },
-  });
-
-  
-  if (isTipoAnimal(termo.toUpperCase())) {
-    filtros.push({
-      tipo: termo.toUpperCase() as TipoAnimal,
-    });
-  }
+  const termoNormalizado = termoOriginal.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+  const tipoParaFiltro = termoMap[termoNormalizado];
 
   try {
-    const resultados = await prisma.animal.findMany({
-      where: {
-        OR: filtros,
-      },
-    });
+    const query = `
+      SELECT * FROM "Animal"
+      WHERE unaccent("raca") ILIKE unaccent($1)
+      ${tipoParaFiltro ? 'OR "tipo" = $2' : ''}
+    `;
+    const params = tipoParaFiltro ? [`%${termoOriginal}%`, tipoParaFiltro] : [`%${termoOriginal}%`];
+
+    const resultados = await prisma.$queryRawUnsafe(query, ...params);
 
     res.json(resultados);
   } catch (error) {
@@ -45,4 +40,4 @@ router.get('/', async (req, res) => {
   }
 });
 
-export default router
+export default router;
