@@ -16,7 +16,8 @@ export function InputPesquisa({ setAnimais }: Props) {
     setLoading(true);
     try {
       const resposta = await fetch(
-        `http://localhost:3000/animais/pesquisa?termo=${encodeURIComponent(termo)}`
+        `https://emergentes-aula1-main-6evg.vercel.app/animais/pesquisa?termo=
+${encodeURIComponent(termo)}`
       );
       const dados = await resposta.json();
       setAnimais(dados);
