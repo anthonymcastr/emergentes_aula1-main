@@ -54,5 +54,28 @@ router.get("/:clienteId", async (req, res) => {
   }
 })
 
+router.get("/recebidas/:usuarioId", async (req, res) => {
+  const { usuarioId } = req.params
+
+  try {
+    const contatosRecebidos = await prisma.contato.findMany({
+      where: {
+        animal: {
+          usuarioId: Number(usuarioId) // só pega mensagens dos animais que ele postou
+        }
+      },
+      include: {
+        animal: true,
+        cliente: true
+      },
+      orderBy: { criadoEm: 'desc' }
+    })
+
+    res.status(200).json(contatosRecebidos)
+  } catch (error) {
+    res.status(500).json({ erro: "Erro ao buscar mensagens recebidas", detalhes: error })
+  }
+})
+
 
 export default router

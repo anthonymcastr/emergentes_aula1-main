@@ -31,7 +31,8 @@ type ContatoType = {
 const apiUrl = import.meta.env.VITE_API_URL
 
 export default function Contato() {
-  const [contatos, setContatos] = useState<ContatoType[]>([])
+  const [contatosEnviados, setContatosEnviados] = useState<ContatoType[]>([])
+  const [contatosRecebidos, setContatosRecebidos] = useState<ContatoType[]>([])
   const [grupoSelecionado, setGrupoSelecionado] = useState<string | null>(null)
 
   const { cliente } = useClienteStore()
@@ -40,22 +41,31 @@ export default function Contato() {
   useEffect(() => {
     async function buscaDados() {
       try {
-        let url = ""
         let headers = {}
 
+        // Admin: busca todos
         if (admin?.role === "admin") {
-          url = `${apiUrl}/contatos` // pega todos
-          headers = { Authorization: `Bearer ${admin.token}` }
-        } else if (cliente) {
-          url = `${apiUrl}/contatos/${cliente.id}`
-        } else {
-          return
+          const res = await fetch(`${apiUrl}/contatos`, {
+            headers: { Authorization: `Bearer ${admin.token}` }
+          })
+          if (!res.ok) throw new Error("Erro ao buscar contatos")
+          const dados = await res.json()
+          setContatosEnviados(dados)
         }
 
-        const res = await fetch(url, { headers })
-        if (!res.ok) throw new Error("Erro ao buscar contatos")
-        const dados = await res.json()
-        setContatos(dados)
+        // Cliente: busca enviados e recebidos
+        else if (cliente) {
+          const enviadosRes = await fetch(`${apiUrl}/contatos/${cliente.id}`)
+          const recebidosRes = await fetch(`${apiUrl}/contatos/recebidas/${cliente.id}`)
+
+          if (!enviadosRes.ok || !recebidosRes.ok) throw new Error("Erro ao buscar mensagens")
+
+          const enviados = await enviadosRes.json()
+          const recebidos = await recebidosRes.json()
+
+          setContatosEnviados(enviados)
+          setContatosRecebidos(recebidos)
+        }
       } catch (err) {
         console.error(err)
       }
@@ -72,24 +82,23 @@ export default function Contato() {
   }
 
   // Agrupamento para admin
-const grupos = admin?.role === "admin"
-  ? contatos.reduce((acc, contato) => {
-      if (!contato.animal) return acc // ignora se animal for null
-
-      const key = `${contato.cliente.id}-${contato.animal.id}`
-      if (!acc[key]) {
-        acc[key] = {
-          cliente: contato.cliente,
-          animal: contato.animal,
-          mensagens: []
+  const grupos = admin?.role === "admin"
+    ? contatosEnviados.reduce((acc, contato) => {
+        if (!contato.animal) return acc
+        const key = `${contato.cliente.id}-${contato.animal.id}`
+        if (!acc[key]) {
+          acc[key] = {
+            cliente: contato.cliente,
+            animal: contato.animal,
+            mensagens: []
+          }
         }
-      }
-      acc[key].mensagens.push(contato)
-      return acc
-    }, {} as Record<string, { cliente: ContatoType["cliente"]; animal: ContatoType["animal"]; mensagens: ContatoType[] }>)
-  : null
+        acc[key].mensagens.push(contato)
+        return acc
+      }, {} as Record<string, { cliente: ContatoType["cliente"]; animal: ContatoType["animal"]; mensagens: ContatoType[] }>)
+    : null
 
-
+  // Admin view
   if (admin?.role === "admin") {
     return (
       <section className="max-w-7xl mx-auto p-4">
@@ -154,18 +163,19 @@ const grupos = admin?.role === "admin"
     )
   }
 
+  // Cliente view
   return (
     <section className="max-w-7xl mx-auto">
       <h1 className="mb-6 mt-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-4xl lg:text-5xl dark:text-white">
         Histórico de <span className="underline underline-offset-3 decoration-8 decoration-orange-400 dark:decoration-orange-600">Mensagens</span>
       </h1>
 
-      {contatos.length === 0 ? (
-        <h2 className="mb-4 mt-10 text-2xl font-bold text-gray-900 dark:text-white">
-          Você ainda não entrou em contato com nenhum anunciante. 🐾
-        </h2>
+      {/* Mensagens enviadas */}
+      <h2 className="text-2xl font-bold mt-10 mb-4">Mensagens que você enviou</h2>
+      {contatosEnviados.length === 0 ? (
+        <p className="mb-6 text-lg text-gray-700">Você ainda não entrou em contato com nenhum anunciante. 🐾</p>
       ) : (
-        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 mb-10">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th className="px-6 py-3">Animal</th>
@@ -175,7 +185,7 @@ const grupos = admin?.role === "admin"
             </tr>
           </thead>
           <tbody>
-            {contatos.map(contato => (
+            {contatosEnviados.map(contato => (
               <tr key={contato.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4">
                   <p className="font-bold">{contato.animal.nome}</p>
@@ -197,6 +207,44 @@ const grupos = admin?.role === "admin"
                   ) : (
                     <em>Aguardando resposta...</em>
                   )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {/* Mensagens recebidas */}
+      <h2 className="text-2xl font-bold mt-10 mb-4">Mensagens recebidas sobre seus animais</h2>
+      {contatosRecebidos.length === 0 ? (
+        <p className="mb-6 text-lg text-gray-700">Nenhum usuário entrou em contato com seus anúncios ainda.</p>
+      ) : (
+        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th className="px-6 py-3">Animal</th>
+              <th className="px-6 py-3">Foto</th>
+              <th className="px-6 py-3">Mensagem recebida</th>
+              <th className="px-6 py-3">Cliente</th>
+            </tr>
+          </thead>
+          <tbody>
+            {contatosRecebidos.map(contato => (
+              <tr key={contato.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">
+                  <p className="font-bold">{contato.animal.nome}</p>
+                  <p className="text-sm">Raça: {contato.animal.raca} | Cidade: {contato.animal.cidade}</p>
+                </td>
+                <td className="px-6 py-4">
+                  <img src={contato.animal.urlImagem} className="w-24 h-24 object-cover" />
+                </td>
+                <td className="px-6 py-4">
+                  <p><strong>{contato.mensagem}</strong></p>
+                  <p className="text-sm italic">Enviado em: {dataDMA(contato.criadoEm)}</p>
+                </td>
+                <td className="px-6 py-4">
+                  <p><strong>{contato.cliente.nome}</strong></p>
+                  <p className="text-sm">{contato.cliente.email}</p>
                 </td>
               </tr>
             ))}

@@ -6,16 +6,16 @@ const Sobre: React.FC = () => {
         <div className="max-w-2xl mx-auto p-6 mt-10 ">
             <h1 className="text-3xl font-bold mb-4 text-blue-700">Sobre o Aplicativo</h1>
             <p className="mb-4 text-gray-700">
-                Este aplicativo foi desenvolvido para auxiliar na busca por pets perdidos na sua cidade.
+                Este projeto está sendo desenvolvido para auxiliar na busca por pets perdidos na cidade de Pelotas.
                 A plataforma oferece diversas funcionalidades para ajudar tutores e amantes de animais:
             </p>
             <ul className="list-disc list-inside mb-4 text-gray-700">
-                <li>Consultar uma lista de animais encontrados;</li>
-                <li>Cadastrar pets localizados;</li>
-                <li>Visualizar animais disponíveis para adoção.</li>
+                <li><strong>Consultar uma lista de animais encontrados;</strong></li>
+                <li><strong>Cadastrar pets localizados;</strong></li>
+                <li><strong>Visualizar animais disponíveis para adoção.</strong></li>
             </ul>
             <p className="mb-4 text-gray-700">
-                Além disso, o App também vai oferecer futuramente recursos para facilitar o dia a dia do seu pet:
+                Além disso, o App também vai oferecer <strong>futuramente</strong> recursos para facilitar o dia a dia do seu pet:
             </p>
             <ul className="list-disc list-inside mb-4 text-gray-700">
                 <li>Lembretes de vacinas e atividades;</li>
