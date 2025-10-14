@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { Router } from 'express'
 import { z } from 'zod'
+import { enviarEmail } from '../utils/email' // ajuste o caminho conforme seu projeto
 
 const prisma = new PrismaClient()
 const router = Router()
@@ -22,16 +23,37 @@ router.post("/", async (req, res) => {
   const { mensagem, clienteId, animalId } = valida.data
 
   try {
+    // Cria o contato no banco
     const contato = await prisma.contato.create({
       data: { mensagem, clienteId, animalId }
     })
+
+    // Buscar animal e dono para enviar e-mail
+    const animal = await prisma.animal.findUnique({
+      where: { id: animalId },
+      include: {
+        usuario: true
+      }
+    })
+
+    // Se o dono existir e tiver e-mail, envia o e-mail
+    if (animal && animal.usuario?.email) {
+      const html = `
+        <h2>Nova mensagem recebida sobre ${animal.nome}</h2>
+        <p><strong>Mensagem:</strong> ${mensagem}</p>
+        <p>Entre em contato com o interessado!</p>
+      `
+
+      await enviarEmail(animal.usuario.email, `Novo contato sobre ${animal.nome}`, html)
+    }
+
     res.status(201).json(contato)
   } catch (error) {
-    res.status(500).json({ erro: error })
+    console.error(error)
+    res.status(500).json({ erro: "Erro ao criar contato" })
   }
 })
 
-// Listar mensagens de um cliente
 // Listar mensagens de um cliente (quem enviou)
 router.get("/:clienteId", async (req, res) => {
   const { clienteId } = req.params
@@ -41,10 +63,10 @@ router.get("/:clienteId", async (req, res) => {
       include: {
         animal: {
           include: {
-            usuario: true, // <- pega o dono do animal (destinatário)
+            usuario: true, // pega o dono do animal (destinatário)
           }
         },
-        cliente: true, // <- quem enviou a mensagem
+        cliente: true, // quem enviou a mensagem
       },
       orderBy: { criadoEm: 'desc' }
     })
@@ -54,6 +76,7 @@ router.get("/:clienteId", async (req, res) => {
   }
 })
 
+// Listar mensagens recebidas para um usuário (dono dos animais)
 router.get("/recebidas/:usuarioId", async (req, res) => {
   const { usuarioId } = req.params
 
@@ -61,7 +84,7 @@ router.get("/recebidas/:usuarioId", async (req, res) => {
     const contatosRecebidos = await prisma.contato.findMany({
       where: {
         animal: {
-          usuarioId: Number(usuarioId) 
+          usuarioId: Number(usuarioId)
         }
       },
       include: {
@@ -76,6 +99,5 @@ router.get("/recebidas/:usuarioId", async (req, res) => {
     res.status(500).json({ erro: "Erro ao buscar mensagens recebidas", detalhes: error })
   }
 })
-
 
 export default router
