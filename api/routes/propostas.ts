@@ -61,7 +61,7 @@ router.get("/recebidas/:usuarioId", async (req, res) => {
     const contatosRecebidos = await prisma.contato.findMany({
       where: {
         animal: {
-          usuarioId: Number(usuarioId) // só pega mensagens dos animais que ele postou
+          usuarioId: Number(usuarioId) 
         }
       },
       include: {
