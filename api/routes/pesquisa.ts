@@ -3,10 +3,11 @@ import router from './animais';
 
 const prisma = new PrismaClient();
 
-function isTipoAnimal(value: string): value is TipoAnimal {
-  return Object.values(TipoAnimal).includes(value as TipoAnimal);
+function normalizarTexto(texto: string): string {
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
 }
 
+// Mapeia versões normalizadas para enums válidos
 const termoMap: Record<string, TipoAnimal> = {
   ADOCAO: TipoAnimal.ADOCAO,
   PERDIDO: TipoAnimal.PERDIDO,
@@ -20,18 +21,21 @@ router.get('/', async (req, res) => {
     return res.status(400).json({ erro: 'O termo de busca é obrigatório.' });
   }
 
-  const termoNormalizado = termoOriginal.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+  const termoNormalizado = normalizarTexto(termoOriginal);
+  console.log("Original:", termoOriginal, "→ Normalizado:", termoNormalizado);
+
   const tipoParaFiltro = termoMap[termoNormalizado];
 
-  try {
-    const query = `
-      SELECT * FROM "Animal"
-      WHERE unaccent("raca") ILIKE unaccent($1)
-      ${tipoParaFiltro ? 'OR "tipo" = $2' : ''}
-    `;
-    const params = tipoParaFiltro ? [`%${termoOriginal}%`, tipoParaFiltro] : [`%${termoOriginal}%`];
+  if (!tipoParaFiltro) {
+    return res.status(404).json({ erro: 'Tipo não encontrado.' });
+  }
 
-    const resultados = await prisma.$queryRawUnsafe(query, ...params);
+  try {
+    const resultados = await prisma.animal.findMany({
+      where: {
+        tipo: tipoParaFiltro,
+      },
+    });
 
     res.json(resultados);
   } catch (error) {
