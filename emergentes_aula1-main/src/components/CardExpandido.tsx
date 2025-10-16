@@ -5,7 +5,7 @@ import { useClienteStore } from "../context/ClienteContext"
 type Props = {
   animal: Animal
   onClose: () => void
-  onExcluido?: () => void // callback quando o admin excluir
+  onExcluido?: () => void 
 }
 
 const apiUrl = import.meta.env.VITE_API_URL
@@ -53,8 +53,8 @@ export function CardExpandido({ animal, onClose, onExcluido }: Props) {
       })
       if (!response.ok) throw new Error("Erro ao excluir")
       alert("Animal excluído com sucesso!")
-      onExcluido?.() // chama callback do Listagem
-      onClose()       // fecha o card
+      onExcluido?.() 
+      onClose()       
     } catch (err) {
       console.error(err)
       alert("Erro ao excluir o animal")

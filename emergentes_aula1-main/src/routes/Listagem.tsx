@@ -8,7 +8,7 @@ import { useAdminStore } from "../Admin/context/AdminContext"
 export default function Listagem() {
   const [animais, setAnimais] = useState<Animal[]>([])
   const [cardSelecionado, setCardSelecionado] = useState<Animal | null>(null)
-  const { admin } = useAdminStore() // 
+  const { admin } = useAdminStore() 
   const isAdmin = admin?.role === "admin"
 
   const buscaDados = async () => {

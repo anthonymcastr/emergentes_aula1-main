@@ -6,14 +6,14 @@ import { enviarEmail } from '../utils/email' // ajuste o caminho conforme seu pr
 const prisma = new PrismaClient()
 const router = Router()
 
-// Validação com zod
+
 const contatoSchema = z.object({
   mensagem: z.string().min(2, "Mensagem deve ter no mínimo 2 caracteres"),
   clienteId: z.number().min(1, "Cliente inválido"),
   animalId: z.number().min(1, "Animal inválido"),
 })
 
-// Criar contato
+
 router.post("/", async (req, res) => {
   const valida = contatoSchema.safeParse(req.body)
   if (!valida.success) {
@@ -23,12 +23,12 @@ router.post("/", async (req, res) => {
   const { mensagem, clienteId, animalId } = valida.data
 
   try {
-    // Cria o contato no banco
+    
     const contato = await prisma.contato.create({
       data: { mensagem, clienteId, animalId }
     })
 
-    // Buscar animal e dono para enviar e-mail
+    
     const animal = await prisma.animal.findUnique({
       where: { id: animalId },
       include: {
@@ -36,7 +36,7 @@ router.post("/", async (req, res) => {
       }
     })
 
-    // Se o dono existir e tiver e-mail, envia o e-mail
+    
     if (animal && animal.usuario?.email) {
       const html = `
         <h2>Nova mensagem recebida sobre ${animal.nome}</h2>
@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
   }
 })
 
-// Listar mensagens de um cliente (quem enviou)
+
 router.get("/:clienteId", async (req, res) => {
   const { clienteId } = req.params
   try {
@@ -63,10 +63,10 @@ router.get("/:clienteId", async (req, res) => {
       include: {
         animal: {
           include: {
-            usuario: true, // pega o dono do animal (destinatário)
+            usuario: true, 
           }
         },
-        cliente: true, // quem enviou a mensagem
+        cliente: true, 
       },
       orderBy: { criadoEm: 'desc' }
     })
@@ -76,7 +76,7 @@ router.get("/:clienteId", async (req, res) => {
   }
 })
 
-// Listar mensagens recebidas para um usuário (dono dos animais)
+
 router.get("/recebidas/:usuarioId", async (req, res) => {
   const { usuarioId } = req.params
 
