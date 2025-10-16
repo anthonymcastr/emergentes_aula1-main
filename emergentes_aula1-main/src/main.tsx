@@ -10,6 +10,7 @@ import Login from './routes/Login.tsx';
 import Contato from './routes/Contato.tsx';
 import LoginAdmin from './Admin/login-admin.tsx';
 import Admin from './Admin/Admin.tsx';
+import Cadastro from "./routes/Cadastro"
 
 import Layout from './Layout.tsx';
 import AdminLayout from './Admin/AdminLayout.tsx';
@@ -27,6 +28,7 @@ const rotas = createBrowserRouter([
       { path: 'sobre', element: <Sobre /> },
       { path: 'login', element: <Login /> },
       { path: 'contato', element: <Contato /> },
+       {path: 'cadastro', element: <Cadastro />},
       { path: 'login-admin', element: <LoginAdmin /> }, // login separado
     ],
   },

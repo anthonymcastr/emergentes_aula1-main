@@ -27,7 +27,7 @@ app.use("/contatos", routesContatos)
 app.use("/clientes/contatos", routesContatos)
 app.use("/login-admin", routesLoginAdmin)
 app.use("/admins", routesAdmins)
-app.use("/contatos", propostasAdmin)
+app.use("/contatos/admin", propostasAdmin)
 
 
 

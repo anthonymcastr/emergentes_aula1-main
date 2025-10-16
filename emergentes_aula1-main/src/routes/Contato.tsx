@@ -123,11 +123,12 @@ export default function Contato() {
         ) : (
           <div>
             <button
-              className="mb-4 text-blue-600 underline"
-              onClick={() => setGrupoSelecionado(null)}
-            >
-              ← Voltar
-            </button>
+  onClick={() => setGrupoSelecionado(null)}
+  className="mb-4 px-4 py-2 rounded-lg text-white font-semibold bg-blue-600 hover:bg-blue-700 transition-colors duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+>
+  ← Voltar
+</button>
+
 
             {grupos && grupos[grupoSelecionado] && (
               <>
@@ -135,12 +136,7 @@ export default function Contato() {
                   Mensagem de {grupos[grupoSelecionado].cliente.nome}
                 </h2>
 
-                <p className="text-sm mb-2 text-gray-700">
-                  <strong>Destinatário:</strong>{" "}
-                  {grupos[grupoSelecionado].animal.usuario
-                    ? `${grupos[grupoSelecionado].animal.usuario.nome} — ${grupos[grupoSelecionado].animal.usuario.email}`
-                    : "Informação não disponível"}
-                </p>
+              
 
                 <p className="text-lg mb-4">
                   Animal: <strong>{grupos[grupoSelecionado].animal.nome}</strong>

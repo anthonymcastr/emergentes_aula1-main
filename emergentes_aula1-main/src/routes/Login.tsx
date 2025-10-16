@@ -2,6 +2,8 @@ import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { useClienteStore } from "../context/ClienteContext"
+import { Link } from "react-router-dom"
+
 
 type Inputs = {
   email: string
@@ -85,6 +87,12 @@ export default function Login() {
               </button>
             </form>
           </div>
+          <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+  Não tem uma conta?{" "}
+  <Link to="/cadastro" className="text-orange-600 hover:underline dark:text-orange-400">
+    Cadastre-se
+  </Link>
+</p>
         </div>
       </div>
     </section>

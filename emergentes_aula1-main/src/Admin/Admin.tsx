@@ -30,20 +30,20 @@ export default function Admin() {
     <div className="flex min-h-screen bg-gray-100">
      
 
-      {/* Conteúdo principal */}
+    
       <main className="flex-1 p-10 flex flex-col items-center justify-center h-200">
         <h1 className="text-3xl font-bold mb-10">Estatísticas: Animais</h1>
 
         {dados ? (
           <VictoryPie
   data={data}
-  colorScale={["#86efac", "#fde68a", "#fca5a5"]} // Cores pastel
+  colorScale={["#86efac", "#fde68a", "#fca5a5"]} 
   labels={({ datum }) => `${datum.x}: ${datum.y}`}
   labelPosition="centroid"
   style={{
     labels: {
       fontSize: 10,
-      fill: "#4b5563", // Gray-700
+      fill: "#4b5563",
       fontWeight: "bold",
     },
     data: {
