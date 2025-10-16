@@ -6,10 +6,12 @@ export default function Inclusao() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<Animal>();
   const navigate = useNavigate();
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   async function onSubmit(data: Animal) {
     console.log("Dados enviados:", data); 
     try {
-      const resp = await fetch("http://localhost:3000/animais", {
+      const resp = await fetch(`${API_URL}/animais`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -17,6 +19,7 @@ export default function Inclusao() {
 
       const resultado = await resp.json();
       console.log("Resposta do backend:", resultado); 
+
       if (!resp.ok) {
         throw new Error("Erro ao cadastrar animal");
       }
@@ -89,7 +92,6 @@ export default function Inclusao() {
             >
               <option value="">Selecione uma cidade</option>
               <option value="PELOTAS">PELOTAS</option>
-             
             </select>
             {errors.cidade && <span className="text-red-500 text-sm">{errors.cidade.message}</span>}
           </div>
