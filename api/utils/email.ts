@@ -10,12 +10,17 @@ export const transporter = nodemailer.createTransport({
 })
 
 export async function enviarEmail(destinatario: string, assunto: string, corpoHtml: string) {
-  const info = await transporter.sendMail({
-    from: `"PetPel" <${process.env.MAILTRAP_FROM}>`,
-    to: destinatario,
-    subject: assunto,
-    html: corpoHtml
-  })
+  try {
+    const info = await transporter.sendMail({
+      from: `"PetPel" <${process.env.MAILTRAP_FROM}>`,
+      to: destinatario,
+      subject: assunto,
+      html: corpoHtml
+    })
 
-  console.log("E-mail enviado:", info.messageId)
+    console.log("E-mail enviado:", info.messageId)
+  } catch (error) {
+    console.warn("Erro ao enviar e-mail:", error)
+    
+  }
 }

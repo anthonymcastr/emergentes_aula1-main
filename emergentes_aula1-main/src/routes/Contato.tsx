@@ -43,7 +43,7 @@ export default function Contato() {
       try {
         
 
-        // Admin: busca todos
+        
         if (admin?.role === "admin") {
           const res = await fetch(`${apiUrl}/contatos`, {
             headers: { Authorization: `Bearer ${admin.token}` }
@@ -53,7 +53,7 @@ export default function Contato() {
           setContatosEnviados(dados)
         }
 
-        // Cliente: busca enviados e recebidos
+       
         else if (cliente) {
           const enviadosRes = await fetch(`${apiUrl}/contatos/${cliente.id}`)
           const recebidosRes = await fetch(`${apiUrl}/contatos/recebidas/${cliente.id}`)
@@ -81,7 +81,7 @@ export default function Contato() {
     return `${dia}/${mes}/${ano}`
   }
 
-  // Agrupamento para admin
+  
   const grupos = admin?.role === "admin"
     ? contatosEnviados.reduce((acc, contato) => {
         if (!contato.animal) return acc
@@ -98,7 +98,7 @@ export default function Contato() {
       }, {} as Record<string, { cliente: ContatoType["cliente"]; animal: ContatoType["animal"]; mensagens: ContatoType[] }>)
     : null
 
-  // Admin view
+  
   if (admin?.role === "admin") {
     return (
       <section className="max-w-7xl mx-auto p-4">
@@ -163,14 +163,13 @@ export default function Contato() {
     )
   }
 
-  // Cliente view
+  
   return (
     <section className="max-w-7xl mx-auto">
       <h1 className="mb-6 mt-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-4xl lg:text-5xl dark:text-white">
         Histórico de <span className="underline underline-offset-3 decoration-8 decoration-orange-400 dark:decoration-orange-600">Mensagens</span>
       </h1>
 
-      {/* Mensagens enviadas */}
       <h2 className="text-2xl font-bold mt-10 mb-4">Mensagens que você enviou</h2>
       {contatosEnviados.length === 0 ? (
         <p className="mb-6 text-lg text-gray-700">Você ainda não entrou em contato com nenhum anunciante. 🐾</p>
@@ -214,7 +213,6 @@ export default function Contato() {
         </table>
       )}
 
-      {/* Mensagens recebidas */}
       <h2 className="text-2xl font-bold mt-10 mb-4">Mensagens recebidas sobre seus animais</h2>
       {contatosRecebidos.length === 0 ? (
         <p className="mb-6 text-lg text-gray-700">Nenhum usuário entrou em contato com seus anúncios ainda.</p>

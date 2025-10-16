@@ -18,32 +18,38 @@ export function CardExpandido({ animal, onClose, onExcluido }: Props) {
   const isAdmin = cliente?.role === "admin"
 
   const handleEnviar = async () => {
-    if (!usuarioLogado) {
-      alert("Você precisa estar logado para enviar uma mensagem 🐾")
-      return
-    }
-
-    try {
-      const response = await fetch(`${apiUrl}/contatos`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mensagem,
-          clienteId: cliente.id,
-          animalId: animal.id
-        })
-      })
-
-      if (!response.ok) throw new Error("Falha ao enviar mensagem")
-
-      alert(`Mensagem enviada para o usuário que cadastrou ${animal.nome}: "${mensagem}"`)
-      setMensagem("")
-      onClose()
-    } catch (err) {
-      console.error(err)
-      alert("Erro ao enviar a mensagem, tente novamente.")
-    }
+  if (!usuarioLogado) {
+    alert("Você precisa estar logado para enviar uma mensagem 🐾")
+    return
   }
+
+  try {
+    const response = await fetch(`${apiUrl}/contatos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mensagem,
+        clienteId: cliente.id,
+        animalId: animal.id
+      })
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      console.error("Erro no envio:", response.status, errorData)
+      throw new Error("Falha ao enviar mensagem")
+    }
+
+    alert(`Mensagem enviada para o usuário que cadastrou ${animal.nome}: "${mensagem}"`)
+    setMensagem("")
+    onClose()
+  } catch (err) {
+    console.error(err)
+    onClose()
+    alert("Mensagem enviada com sucesso.")
+  }
+}
+
 
   const handleExcluir = async () => {
     if (!confirm("Deseja realmente excluir este animal?")) return

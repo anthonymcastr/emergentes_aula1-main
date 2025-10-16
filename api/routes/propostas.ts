@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { Router } from 'express'
 import { z } from 'zod'
-import { enviarEmail } from '../utils/email' // ajuste o caminho conforme seu projeto
+import { enviarEmail } from '../utils/email' 
 
 const prisma = new PrismaClient()
 const router = Router()
@@ -23,12 +23,10 @@ router.post("/", async (req, res) => {
   const { mensagem, clienteId, animalId } = valida.data
 
   try {
-    
     const contato = await prisma.contato.create({
       data: { mensagem, clienteId, animalId }
     })
 
-    
     const animal = await prisma.animal.findUnique({
       where: { id: animalId },
       include: {
@@ -36,7 +34,6 @@ router.post("/", async (req, res) => {
       }
     })
 
-    
     if (animal && animal.usuario?.email) {
       const html = `
         <h2>Nova mensagem recebida sobre ${animal.nome}</h2>
@@ -44,7 +41,12 @@ router.post("/", async (req, res) => {
         <p>Entre em contato com o interessado!</p>
       `
 
-      await enviarEmail(animal.usuario.email, `Novo contato sobre ${animal.nome}`, html)
+      try {
+        await enviarEmail(animal.usuario.email, `Novo contato sobre ${animal.nome}`, html)
+      } catch (emailError) {
+        console.warn("Erro ao enviar e-mail:", emailError)
+        
+      }
     }
 
     res.status(201).json(contato)
@@ -53,6 +55,7 @@ router.post("/", async (req, res) => {
     res.status(500).json({ erro: "Erro ao criar contato" })
   }
 })
+
 
 
 router.get("/:clienteId", async (req, res) => {
