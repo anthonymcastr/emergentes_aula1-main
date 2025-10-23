@@ -42,16 +42,15 @@ export default function Contato() {
     async function buscaDados() {
       try {
         
-
-        
         if (admin?.role === "admin") {
-          const res = await fetch(`${apiUrl}/contatos`, {
-            headers: { Authorization: `Bearer ${admin.token}` }
+         const res = await fetch(`${apiUrl}/admin/contatos`, {
+           headers: { Authorization: `Bearer ${admin.token}` }
           })
           if (!res.ok) throw new Error("Erro ao buscar contatos")
           const dados = await res.json()
           setContatosEnviados(dados)
         }
+
 
        
         else if (cliente) {

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import type { Animal } from "../utils/AnimalType";
+import type { Animal } from "../utils/animalType";
 import { useNavigate } from "react-router-dom";
 
 export default function Inclusao() {

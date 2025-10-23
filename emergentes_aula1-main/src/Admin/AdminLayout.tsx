@@ -30,7 +30,7 @@ export default function AdminLayout() {
             </Link>
           </li>
           <li>
-            <Link to="/admin/contato" className="hover:underline">
+            <Link to="/admin/contatos" className="hover:underline">
               Mensagens
             </Link>
           </li>

@@ -87,12 +87,14 @@ export default function Login() {
               </button>
             </form>
           </div>
-          <p className="text-sm text-center text-gray-500 dark:text-gray-400">
-  Não tem uma conta?{" "}
-  <Link to="/cadastro" className="text-orange-600 hover:underline dark:text-orange-400">
-    Cadastre-se
-  </Link>
-</p>
+          <div className="mb-5">
+            <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+              Não tem uma conta?{" "}
+              <Link to="/cadastro" className="text-orange-600 hover:underline dark:text-orange-400">
+                Cadastre-se
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </section>
