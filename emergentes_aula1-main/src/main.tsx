@@ -2,7 +2,6 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 
-import App from './App.tsx';
 import Inclusao from './routes/Inclusao.tsx';
 import Listagem from './routes/Listagem.tsx';
 import Sobre from './routes/Sobre.tsx';
@@ -11,6 +10,7 @@ import Contato from './routes/Contato.tsx';
 import LoginAdmin from './Admin/login-admin.tsx';
 import Admin from './Admin/Admin.tsx';
 import Cadastro from "./routes/Cadastro"
+import Inbox from './routes/Inbox.tsx';
 
 import Layout from './Layout.tsx';
 import AdminLayout from './Admin/AdminLayout.tsx';
@@ -20,20 +20,20 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 const rotas = createBrowserRouter([
   {
     path: '/',
-    element: <Layout />, // layout com título / header
+    element: <Layout />,
     children: [
-      { index: true, element: <Listagem /> }, // 🟢 HOME AGORA
+      { index: true, element: <Listagem /> }, // HOME
       { path: 'inclusao', element: <Inclusao /> },
+      { path: 'inbox', element: <Inbox /> },
       { path: 'sobre', element: <Sobre /> },
       { path: 'login', element: <Login /> },
-      { path: 'contato', element: <Contato /> },
       { path: 'cadastro', element: <Cadastro /> },
       { path: 'login-admin', element: <LoginAdmin /> },
     ],
   },
   {
     path: '/admin',
-    element: <AdminLayout />, // layout admin
+    element: <AdminLayout />,
     children: [
       { index: true, element: <Admin /> },
       { path: 'listagem', element: <Listagem /> },
@@ -41,6 +41,7 @@ const rotas = createBrowserRouter([
     ],
   },
 ]);
+
 
 
 createRoot(document.getElementById('root')!).render(

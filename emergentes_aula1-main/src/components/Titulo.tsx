@@ -80,7 +80,7 @@ export default function Titulo() {
                 </li>
                 <li>
                   <Link
-                    to="/contato"
+                    to="/inbox"
                     className="block py-2 px-3 hover:font-bold text-white md:p-0  md:hover:font-bold "
                     onClick={() => setMenuAberto(false)}
                   >
