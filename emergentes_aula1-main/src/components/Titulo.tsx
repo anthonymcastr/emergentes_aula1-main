@@ -90,25 +90,9 @@ export default function Titulo() {
               </>
             )}
 
-            <li>
-              <Link
-                to="/listagem"
-                className="block py-2 px-3 text-white hover:font-bold rounded-sm md:bg-transparent md:p-0 md:hover:font-bold"
-                onClick={() => setMenuAberto(false)}
-              >
-                Listagem
-              </Link>
-            </li>
 
-            <li>
-              <Link
-                to="/sobre"
-                className="block py-2 px-3 text-white hover:font-bold rounded-sm md:bg-transparent md:p-0 md:hover:font-bold"
-                onClick={() => setMenuAberto(false)}
-              >
-                Sobre
-              </Link>
-            </li>
+
+          
 
             { (cliente || admin) && (
               <li>

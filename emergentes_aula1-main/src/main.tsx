@@ -20,29 +20,28 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 const rotas = createBrowserRouter([
   {
     path: '/',
-    element: <Layout />, // com Titulo
+    element: <Layout />, // layout com título / header
     children: [
-      { index: true, element: <App /> },
+      { index: true, element: <Listagem /> }, // 🟢 HOME AGORA
       { path: 'inclusao', element: <Inclusao /> },
-      { path: 'listagem', element: <Listagem /> },
       { path: 'sobre', element: <Sobre /> },
       { path: 'login', element: <Login /> },
       { path: 'contato', element: <Contato /> },
-       {path: 'cadastro', element: <Cadastro />},
-      { path: 'login-admin', element: <LoginAdmin /> }, // login separado
+      { path: 'cadastro', element: <Cadastro /> },
+      { path: 'login-admin', element: <LoginAdmin /> },
     ],
   },
   {
     path: '/admin',
-    element: <AdminLayout />, // sem Titulo, com sidebar
+    element: <AdminLayout />, // layout admin
     children: [
       { index: true, element: <Admin /> },
       { path: 'listagem', element: <Listagem /> },
-      { path: 'contato', element: <Contato />}
-      // você pode adicionar outras páginas do admin aqui no futuro
+      { path: 'contato', element: <Contato /> },
     ],
   },
 ]);
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

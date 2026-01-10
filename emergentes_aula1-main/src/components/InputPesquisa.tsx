@@ -16,9 +16,15 @@ export function InputPesquisa({ setAnimais }: Props) {
     setLoading(true);
     try {
       const resposta = await fetch(
-        `https://emergentes-aula1-main-6evg.vercel.app/animais/pesquisa?termo=
-${encodeURIComponent(termo)}`
+        `https://emergentes-aula1-main-6evg.vercel.app/animais/pesquisa?termo=${encodeURIComponent(
+          termo
+        )}`
       );
+
+      if (!resposta.ok) {
+        throw new Error("Erro na resposta da API");
+      }
+
       const dados = await resposta.json();
       setAnimais(dados);
     } catch (error) {
@@ -38,11 +44,11 @@ ${encodeURIComponent(termo)}`
             value={termo}
             onChange={(e) => setTermo(e.target.value)}
             placeholder="Informe o tipo que você busca.."
-            className="w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-2xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-200 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+            className="w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-2xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
           />
           <button
             type="submit"
-            className="absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-lg text-sm px-4 py-2"
+            className="absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-lg text-sm px-4 py-2 cursor-pointer"
           >
             {loading ? "Buscando..." : "Pesquisar"}
           </button>

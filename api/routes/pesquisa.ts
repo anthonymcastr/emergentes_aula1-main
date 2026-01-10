@@ -1,46 +1,55 @@
-import { PrismaClient, TipoAnimal } from '@prisma/client';
-import router from './animais';
+import { PrismaClient } from "@prisma/client";
+import router from "./animais";
 
 const prisma = new PrismaClient();
 
 function normalizarTexto(texto: string): string {
-  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+  return texto
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase();
 }
 
-// Mapeia versões normalizadas para enums válidos
-const termoMap: Record<string, TipoAnimal> = {
-  ADOCAO: TipoAnimal.ADOCAO,
-  PERDIDO: TipoAnimal.PERDIDO,
-  ENCONTRADO: TipoAnimal.ENCONTRADO,
-};
-
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   const termoOriginal = (req.query.termo as string)?.trim();
 
   if (!termoOriginal) {
-    return res.status(400).json({ erro: 'O termo de busca é obrigatório.' });
+    return res.status(400).json({ erro: "O termo de busca é obrigatório." });
   }
 
   const termoNormalizado = normalizarTexto(termoOriginal);
-  console.log("Original:", termoOriginal, "→ Normalizado:", termoNormalizado);
-
-  const tipoParaFiltro = termoMap[termoNormalizado];
-
-  if (!tipoParaFiltro) {
-    return res.status(404).json({ erro: 'Tipo não encontrado.' });
-  }
 
   try {
-    const resultados = await prisma.animal.findMany({
-      where: {
-        tipo: tipoParaFiltro,
+    // 1️⃣ Busca tudo (ou apenas campos necessários)
+    const animais = await prisma.animal.findMany({
+      select: {
+        id: true,
+        nome: true,
+        raca: true,
+        tipo: true,
+        idade: true,
+        cidade: true,
+        urlImagem: true,
       },
+    });
+
+    // 2️⃣ Filtra em memória usando normalização
+    const resultados = animais.filter((animal) => {
+      const nomeNorm = normalizarTexto(animal.nome);
+      const racaNorm = normalizarTexto(animal.raca);
+      const tipoNorm = normalizarTexto(animal.tipo);
+
+      return (
+        nomeNorm.includes(termoNormalizado) ||
+        racaNorm.includes(termoNormalizado) ||
+        tipoNorm.includes(termoNormalizado)
+      );
     });
 
     res.json(resultados);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ erro: 'Erro ao buscar dados.' });
+    res.status(500).json({ erro: "Erro ao buscar dados." });
   }
 });
 

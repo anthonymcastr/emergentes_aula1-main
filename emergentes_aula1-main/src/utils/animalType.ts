@@ -11,4 +11,5 @@ export type Animal = {
   usuarioId: number
   usuario?: UsuarioType
 }
+
 export type AnimalType = Omit<Animal, 'id' | 'usuario'>
