@@ -6,7 +6,9 @@ import ConversaLista from "../components/ConversaLista";
 export default function Inbox() {
   const { cliente } = useClienteStore();
   const [mensagens, setMensagens] = useState<any[]>([]);
-  const [animalSelecionado, setAnimalSelecionado] = useState<number | null>(null);
+  const [animalSelecionado, setAnimalSelecionado] = useState<number | null>(
+    null
+  );
 
   // 🔹 Carrega todas as mensagens do inbox
   useEffect(() => {
@@ -15,7 +17,9 @@ export default function Inbox() {
     async function carregarMensagens() {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/contatos/inbox/${cliente?.id}?tipo=cliente`
+          `${import.meta.env.VITE_API_URL}/contatos/inbox/${
+            cliente?.id
+          }?tipo=cliente`
         );
         const data = await res.json();
 
@@ -26,7 +30,8 @@ export default function Inbox() {
 
         // ordena cronologicamente
         data.sort(
-          (a, b) => new Date(a.criadoEm).getTime() - new Date(b.criadoEm).getTime()
+          (a, b) =>
+            new Date(a.criadoEm).getTime() - new Date(b.criadoEm).getTime()
         );
 
         setMensagens(data);
@@ -40,6 +45,9 @@ export default function Inbox() {
 
   // 🔹 Agrupa mensagens por animal (conversas)
   const mensagensPorAnimal = mensagens.reduce((acc, msg) => {
+    // Ignora mensagens sem animal (animal foi deletado)
+    if (!msg.animal) return acc;
+
     const id = msg.animal.id;
     if (!acc[id]) acc[id] = [];
     acc[id].push(msg);
@@ -51,7 +59,8 @@ export default function Inbox() {
     setMensagens((prev) => {
       if (prev.some((m) => m.id === msg.id)) return prev;
       return [...prev, msg].sort(
-        (a, b) => new Date(a.criadoEm).getTime() - new Date(b.criadoEm).getTime()
+        (a, b) =>
+          new Date(a.criadoEm).getTime() - new Date(b.criadoEm).getTime()
       );
     });
   }

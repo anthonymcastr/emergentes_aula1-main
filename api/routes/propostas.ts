@@ -84,21 +84,28 @@ router.get("/inbox/:usuarioId", async (req, res) => {
     let mensagens: any[] = [];
 
     if (tipo === "cliente") {
-      // mensagens enviadas pelo cliente
-      const enviadas = await prisma.contato.findMany({
+      // Para cliente: busca todas as mensagens das conversas onde ele participou
+      // Primeiro, pega os animais que o cliente já entrou em contato
+      const animaisContatados = await prisma.contato.findMany({
         where: { clienteId: Number(usuarioId) },
+        select: { animalId: true },
+        distinct: ['animalId'],
+      });
+
+      const animalIds = animaisContatados
+        .map(c => c.animalId)
+        .filter((id): id is number => id !== null);
+
+      // Busca todas as mensagens desses animais (enviadas pelo cliente ou pelo dono)
+      mensagens = await prisma.contato.findMany({
+        where: {
+          animalId: { in: animalIds },
+        },
         include: { animal: { include: { usuario: true } }, cliente: true },
       });
 
-      // mensagens recebidas de volta do dono do animal
-      const recebidas = await prisma.contato.findMany({
-        where: { animal: { usuarioId: Number(usuarioId) } },
-        include: { animal: { include: { usuario: true } }, cliente: true },
-      });
-
-      mensagens = [...enviadas, ...recebidas];
     } else if (tipo === "usuario") {
-      // só mensagens recebidas do dono do animal
+      // Para dono do animal: todas as mensagens sobre seus animais
       mensagens = await prisma.contato.findMany({
         where: { animal: { usuarioId: Number(usuarioId) } },
         include: { animal: { include: { usuario: true } }, cliente: true },
