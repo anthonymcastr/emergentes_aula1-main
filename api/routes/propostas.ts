@@ -10,13 +10,14 @@ const router = Router()
 // Schema de validação
 // =====================
 const contatoSchema = z.object({
-  mensagem: z.string().min(2, "Mensagem deve ter no mínimo 2 caracteres"),
-  clienteId: z.number().min(1, "Cliente inválido"),
-  animalId: z.number().min(1, "Animal inválido"),
+  mensagem: z.string().min(2),
+  remetenteId: z.number(),
+  destinatarioId: z.number(),
+  animalId: z.number(),
 })
 
 // =====================
-// 📤 CRIAR CONTATO (enviar mensagem)
+// 📤 ENVIAR MENSAGEM
 // =====================
 router.post("/", async (req, res) => {
   const valida = contatoSchema.safeParse(req.body)
@@ -25,106 +26,100 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ erros: valida.error.errors })
   }
 
-  const { mensagem, clienteId, animalId } = valida.data
+  const { mensagem, remetenteId, destinatarioId, animalId } = valida.data
 
   try {
-    const contato = await prisma.contato.create({
-      data: {
-        mensagem,
-        clienteId,
-        animalId,
-      },
+    // ❌ evita falar consigo mesmo
+    if (remetenteId === destinatarioId) {
+      return res
+        .status(400)
+        .json({ erro: "Você não pode conversar consigo mesmo" })
+    }
+
+    // 🔎 valida animal
+    const animal = await prisma.animal.findUnique({
+      where: { id: animalId },
       include: {
-        animal: {
-          include: { usuario: true },
-        },
-        cliente: true,
+        usuario: { select: { id: true, email: true } },
       },
     })
 
-    // Email para o dono do animal
-    if (contato.animal && contato.animal.usuario.email) {
+    if (!animal) {
+      return res.status(404).json({ erro: "Animal não encontrado" })
+    }
+
+    // ✅ cria mensagem
+    const contato = await prisma.contato.create({
+      data: {
+        mensagem,
+        animalId,
+        remetenteId,
+        destinatarioId,
+      },
+      include: {
+        animal: true,
+        remetente: true,
+        destinatario: true,
+      },
+    })
+
+    // 📧 email para o destinatário
+    if (animal.usuario?.email && animal.usuario.id === destinatarioId) {
       const html = `
-        <h2>📩 Nova mensagem sobre ${contato.animal?.nome}</h2>
+        <h2>📩 Nova mensagem sobre ${animal.nome}</h2>
         <p>${mensagem}</p>
-        <p>Entre na plataforma para responder.</p>
+        <p>Acesse a plataforma para responder.</p>
       `
 
       try {
         await enviarEmail(
-          contato.animal.usuario.email,
-          `Novo contato sobre ${contato.animal?.nome}`,
+          animal.usuario.email,
+          `Novo contato sobre ${animal.nome}`,
           html
         )
-      } catch (error) {
-        console.warn("Erro ao enviar e-mail:", error)
+      } catch (err) {
+        console.warn("Erro ao enviar e-mail:", err)
       }
     }
 
     res.status(201).json(contato)
   } catch (error) {
     console.error(error)
-    res.status(500).json({ erro: "Erro ao criar contato" })
+    res.status(500).json({ erro: "Erro ao enviar mensagem" })
   }
 })
 
-
 // =======================================================
-// 📥 INBOX (rota ÚNICA)
-// =======================================================
-// tipo = cliente | usuario
+// 📥 INBOX — TODAS AS CONVERSAS DO USUÁRIO
 // =======================================================
 router.get("/inbox/:usuarioId", async (req, res) => {
-  const { usuarioId } = req.params;
-  const { tipo } = req.query;
+  const usuarioId = Number(req.params.usuarioId)
 
-  if (!usuarioId) return res.status(400).json({ erro: "UsuarioId é obrigatório" });
+  if (!usuarioId) {
+    return res.status(400).json({ erro: "usuarioId inválido" })
+  }
 
   try {
-    let mensagens: any[] = [];
+    const mensagens = await prisma.contato.findMany({
+      where: {
+        OR: [
+          { remetenteId: usuarioId },
+          { destinatarioId: usuarioId },
+        ],
+      },
+      include: {
+        animal: true,
+        remetente: true,
+        destinatario: true,
+      },
+      orderBy: { criadoEm: "asc" },
+    })
 
-    if (tipo === "cliente") {
-      // Para cliente: busca todas as mensagens das conversas onde ele participou
-      // Primeiro, pega os animais que o cliente já entrou em contato
-      const animaisContatados = await prisma.contato.findMany({
-        where: { clienteId: Number(usuarioId) },
-        select: { animalId: true },
-        distinct: ['animalId'],
-      });
-
-      const animalIds = animaisContatados
-        .map(c => c.animalId)
-        .filter((id): id is number => id !== null);
-
-      // Busca todas as mensagens desses animais (enviadas pelo cliente ou pelo dono)
-      mensagens = await prisma.contato.findMany({
-        where: {
-          animalId: { in: animalIds },
-        },
-        include: { animal: { include: { usuario: true } }, cliente: true },
-      });
-
-    } else if (tipo === "usuario") {
-      // Para dono do animal: todas as mensagens sobre seus animais
-      mensagens = await prisma.contato.findMany({
-        where: { animal: { usuarioId: Number(usuarioId) } },
-        include: { animal: { include: { usuario: true } }, cliente: true },
-      });
-    } else {
-      return res.status(400).json({ erro: "Tipo inválido" });
-    }
-
-    // ordena cronologicamente
-    mensagens.sort(
-      (a, b) => new Date(a.criadoEm).getTime() - new Date(b.criadoEm).getTime()
-    );
-
-    res.json(mensagens);
+    res.json(mensagens)
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ erro: "Erro ao carregar inbox", detalhes: error });
+    console.error(error)
+    res.status(500).json({ erro: "Erro ao carregar inbox" })
   }
-});
-
+})
 
 export default router

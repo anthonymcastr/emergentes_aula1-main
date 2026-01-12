@@ -1,24 +1,29 @@
 import { useEffect, useState } from "react"
-import type { Animal } from "../utils/AnimalType"
+import type { Animal, AnimalComUsuario } from "../utils/AnimalType"
 import { CardAnimal } from "../components/CardAnimal"
 import { CardExpandido } from "../components/CardExpandido"
 import { InputPesquisa } from "../components/InputPesquisa"
 import { useAdminStore } from "../Admin/context/AdminContext"
 
 export default function Listagem() {
+  // 🐾 Estados
   const [animais, setAnimais] = useState<Animal[]>([])
   const [animaisOriginais, setAnimaisOriginais] = useState<Animal[]>([])
-  const [cardSelecionado, setCardSelecionado] = useState<Animal | null>(null)
+  const [cardSelecionado, setCardSelecionado] = useState<AnimalComUsuario | null>(null)
   const [tipoAtivo, setTipoAtivo] = useState<string | null>(null)
+  const [loadingDetalhe, setLoadingDetalhe] = useState(false)
 
   const { admin } = useAdminStore()
   const isAdmin = admin?.role === "admin"
+  const apiUrl = import.meta.env.VITE_API_URL
 
-  // 🔹 Busca inicial
+  // ========================
+  // Busca inicial
+  // ========================
   const buscaDados = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/animais`)
-      const dados = await response.json()
+      const res = await fetch(`${apiUrl}/animais`)
+      const dados: Animal[] = await res.json()
       setAnimais(dados)
       setAnimaisOriginais(dados)
     } catch (err) {
@@ -30,7 +35,9 @@ export default function Listagem() {
     buscaDados()
   }, [])
 
-  // 🔹 Filtro por tipo
+  // ========================
+  // Filtro por tipo
+  // ========================
   const filtrarPorTipo = (tipo: string) => {
     if (tipoAtivo === tipo) {
       setAnimais(animaisOriginais)
@@ -38,49 +45,59 @@ export default function Listagem() {
       return
     }
 
-    const filtrados = animaisOriginais.filter(
-      (animal) => animal.tipo === tipo
-    )
-
+    const filtrados = animaisOriginais.filter((a) => a.tipo === tipo)
     setAnimais(filtrados)
     setTipoAtivo(tipo)
   }
 
-  // 🔹 Remover da lista
-  const handleExcluido = (id: number) => {
-    setAnimais((prev) => prev.filter((animal) => animal.id !== id))
-    setAnimaisOriginais((prev) => prev.filter((animal) => animal.id !== id))
+  // ========================
+  // Buscar detalhes completos
+  // ========================
+  const handleVerDetalhes = async (animalId: number) => {
+    try {
+      setLoadingDetalhe(true)
+      const res = await fetch(`${apiUrl}/animais/${animalId}`)
+      if (!res.ok) throw new Error("Erro ao buscar animal")
+      const animalCompleto: AnimalComUsuario = await res.json()
+      setCardSelecionado(animalCompleto)
+    } catch (err) {
+      console.error(err)
+      alert("Erro ao carregar dados do animal")
+    } finally {
+      setLoadingDetalhe(false)
+    }
   }
 
-  // 🔹 Exclusão (admin)
+  // ========================
+  // Remover da lista
+  // ========================
+  const handleExcluido = (id: number) => {
+    setAnimais((prev) => prev.filter((a) => a.id !== id))
+    setAnimaisOriginais((prev) => prev.filter((a) => a.id !== id))
+    if (cardSelecionado?.id === id) setCardSelecionado(null)
+  }
+
+  // ========================
+  // Exclusão admin
+  // ========================
   const excluirAnimal = async (id: number) => {
     if (!confirm("Deseja realmente excluir este animal?")) return
 
     try {
       const token = admin?.token
-      if (!token) {
-        alert("Você precisa estar logado como administrador")
-        return
-      }
+      if (!token) return alert("Você precisa estar logado como administrador")
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/animais/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      )
-
-      if (!response.ok) throw new Error("Erro ao excluir")
+      const res = await fetch(`${apiUrl}/animais/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      })
+      if (!res.ok) throw new Error("Erro ao excluir")
 
       alert("Animal excluído com sucesso!")
       handleExcluido(id)
     } catch (err) {
       console.error(err)
-      alert("Erro ao excluir o animal")
+      alert("Erro ao excluir animal")
     }
   }
 
@@ -96,7 +113,6 @@ export default function Listagem() {
           }}
         />
 
-        {/* 🔘 Botões */}
         <div className="flex justify-center gap-3 sm:gap-4 mt-6 flex-wrap">
           {[
             { tipo: "PERDIDO", label: "Perdidos", cor: "red" },
@@ -106,14 +122,11 @@ export default function Listagem() {
             <button
               key={btn.tipo}
               onClick={() => filtrarPorTipo(btn.tipo)}
-              className={`
-                px-5 py-2 rounded-full font-semibold cursor-pointer transition
-                ${
-                  tipoAtivo === btn.tipo
-                    ? `bg-${btn.cor}-600 text-white`
-                    : `bg-${btn.cor}-500 text-white hover:bg-${btn.cor}-600`
-                }
-              `}
+              className={`px-5 py-2 rounded-full font-semibold cursor-pointer transition ${
+                tipoAtivo === btn.tipo
+                  ? `bg-${btn.cor}-600 text-white`
+                  : `bg-${btn.cor}-500 text-white hover:bg-${btn.cor}-600`
+              }`}
             >
               {btn.label}
             </button>
@@ -134,34 +147,22 @@ export default function Listagem() {
         </p>
       </section>
 
-      {/* 🐾 GRID */}
+      {/* 🐾 GRID / CARD EXPANDIDO */}
       <section className="max-w-7xl mx-auto px-4 mt-12 pb-16">
         {cardSelecionado ? (
           <CardExpandido
             animal={cardSelecionado}
             onClose={() => setCardSelecionado(null)}
-            onExcluido={() =>
-              cardSelecionado && handleExcluido(cardSelecionado.id)
-            }
+            onExcluido={() => cardSelecionado && handleExcluido(cardSelecionado.id)}
           />
         ) : (
-          <div
-            className="
-              grid
-              grid-cols-1
-              sm:grid-cols-2
-              md:grid-cols-3
-              lg:grid-cols-4
-              gap-8
-              place-items-center
-            "
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 place-items-center">
             {animais.length > 0 ? (
               animais.map((animal) => (
                 <CardAnimal
                   key={animal.id}
                   data={animal}
-                  onFazerContato={() => setCardSelecionado(animal)}
+                  onFazerContato={() => handleVerDetalhes(animal.id)}
                   isAdmin={isAdmin}
                   onExcluir={excluirAnimal}
                 />

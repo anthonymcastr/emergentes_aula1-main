@@ -1,82 +1,132 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useClienteStore } from "../context/ClienteContext";
 import ChatJanela from "../components/ChatJanela";
 import ConversaLista from "../components/ConversaLista";
 
+/* =======================
+   TIPOS
+======================= */
+
+export type Mensagem = {
+  id: number;
+  mensagem: string;
+  criadoEm: string;
+  animal: any;
+  cliente: any;
+};
+
+export type Conversa = {
+  animal: any;
+  cliente: any;
+  mensagens: Mensagem[];
+};
+
 export default function Inbox() {
   const { cliente } = useClienteStore();
-  const [mensagens, setMensagens] = useState<any[]>([]);
-  const [animalSelecionado, setAnimalSelecionado] = useState<number | null>(
-    null
-  );
 
-  // 🔹 Carrega todas as mensagens do inbox
+  // ⚠️ AQUI estava um dos problemas: não use any[]
+  const [mensagens, setMensagens] = useState<Mensagem[]>([]);
+  const [conversaSelecionada, setConversaSelecionada] =
+    useState<string | null>(null);
+
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
+
+  async function carregarMensagens() {
+    if (!cliente?.id) return;
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/contatos/inbox/${cliente.id}?tipo=cliente`
+      );
+
+      const data: Mensagem[] = await res.json();
+      if (!Array.isArray(data)) return;
+
+      // 🔒 evita duplicação no polling
+      setMensagens((prev) => {
+        const mapa = new Map<number, Mensagem>();
+
+        [...prev, ...data].forEach((msg) => {
+          mapa.set(msg.id, msg);
+        });
+
+        return Array.from(mapa.values()).sort(
+          (a, b) =>
+            new Date(a.criadoEm).getTime() -
+            new Date(b.criadoEm).getTime()
+        );
+      });
+    } catch (error) {
+      console.error("Erro ao carregar inbox:", error);
+    }
+  }
+
   useEffect(() => {
     if (!cliente?.id) return;
 
-    async function carregarMensagens() {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/contatos/inbox/${
-            cliente?.id
-          }?tipo=cliente`
-        );
-        const data = await res.json();
+    carregarMensagens(); // carga inicial
+    pollingRef.current = setInterval(carregarMensagens, 5000);
 
-        if (!Array.isArray(data)) {
-          console.error("Dados do inbox inválidos:", data);
-          return;
-        }
-
-        // ordena cronologicamente
-        data.sort(
-          (a, b) =>
-            new Date(a.criadoEm).getTime() - new Date(b.criadoEm).getTime()
-        );
-
-        setMensagens(data);
-      } catch (error) {
-        console.error("Erro ao carregar mensagens:", error);
-      }
-    }
-
-    carregarMensagens();
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
   }, [cliente?.id]);
 
-  // 🔹 Agrupa mensagens por animal (conversas)
-  const mensagensPorAnimal = mensagens.reduce((acc, msg) => {
-    // Ignora mensagens sem animal (animal foi deletado)
-    if (!msg.animal) return acc;
+  /* =======================
+     AGRUPA POR CONVERSA
+     (ANIMAL + CLIENTE)
+  ======================= */
 
-    const id = msg.animal.id;
-    if (!acc[id]) acc[id] = [];
-    acc[id].push(msg);
-    return acc;
-  }, {} as Record<number, any[]>);
+  const conversas: Record<string, Conversa> = mensagens.reduce(
+    (acc: Record<string, Conversa>, msg: Mensagem) => {
+      if (!msg.animal || !msg.cliente) return acc;
 
-  // 🔹 Callback para adicionar nova mensagem enviada sem duplicar
-  function adicionarMensagem(msg: any) {
-    setMensagens((prev) => {
-      if (prev.some((m) => m.id === msg.id)) return prev;
-      return [...prev, msg].sort(
-        (a, b) =>
-          new Date(a.criadoEm).getTime() - new Date(b.criadoEm).getTime()
-      );
-    });
-  }
+      const chave = `${msg.animal.id}-${msg.cliente.id}`;
+
+      if (!acc[chave]) {
+        acc[chave] = {
+          animal: msg.animal,
+          cliente: msg.cliente,
+          mensagens: [],
+        };
+      }
+
+      acc[chave].mensagens.push(msg);
+      return acc;
+    },
+    {}
+  );
+
+  // 🔁 ordena mensagens internas de cada conversa
+  Object.values(conversas).forEach((conversa) => {
+    conversa.mensagens.sort(
+      (a, b) =>
+        new Date(a.criadoEm).getTime() -
+        new Date(b.criadoEm).getTime()
+    );
+  });
+
+  // 🧹 se a conversa selecionada sumir, limpa
+  useEffect(() => {
+    if (
+      conversaSelecionada &&
+      !conversas[conversaSelecionada]
+    ) {
+      setConversaSelecionada(null);
+    }
+  }, [conversas, conversaSelecionada]);
 
   return (
     <div className="flex h-screen bg-gray-100">
       <ConversaLista
-        conversas={mensagensPorAnimal}
-        onSelect={setAnimalSelecionado}
+        conversas={conversas}
+        onSelect={setConversaSelecionada}
       />
 
-      {animalSelecionado ? (
+      {conversaSelecionada ? (
         <ChatJanela
-          mensagens={mensagensPorAnimal[animalSelecionado]}
+          conversa={conversas[conversaSelecionada]}
           usuarioId={cliente?.id}
-          onNovaMensagem={adicionarMensagem} // envia callback para ChatJanela
         />
       ) : (
         <div className="flex-1 flex items-center justify-center text-gray-400">

@@ -22,31 +22,36 @@ model Animal {
   contatos  Contato[]
 }
 
-
-
 model Cliente {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   nome      String
-  email     String    @unique
+  email     String   @unique
   telefone  String
   senha     String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  role      String    @default("user")
-  contatos  Contato[]
-  animais   Animal[]  // NÃO precisa do @relation com nome aqui
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role      String   @default("user")
+
+  animais           Animal[]
+  contatosEnviados  Contato[] @relation("ContatoRemetente")
+  contatosRecebidos Contato[] @relation("ContatoDestinatario")
 }
 
-
-
 model Contato {
-  id        Int      @id @default(autoincrement())
-  mensagem  String
-  criadoEm  DateTime @default(now())
-  clienteId Int
-  animalId  Int?
-  animal    Animal?   @relation(fields: [animalId], references: [id], onDelete: SetNull)
-  cliente   Cliente  @relation(fields: [clienteId], references: [id])
+  id             Int      @id @default(autoincrement())
+  mensagem       String
+  criadoEm       DateTime @default(now())
+  animalId       Int
+  remetenteId    Int
+  destinatarioId Int
+
+  animal       Animal  @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  remetente    Cliente @relation("ContatoRemetente", fields: [remetenteId], references: [id])
+  destinatario Cliente @relation("ContatoDestinatario", fields: [destinatarioId], references: [id])
+
+  @@index([animalId])
+  @@index([remetenteId])
+  @@index([destinatarioId])
 }
 
 model Admin {

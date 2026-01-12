@@ -1,18 +1,23 @@
-import { PrismaClient } from '@prisma/client'
-import { Router } from 'express'
+import { PrismaClient } from "@prisma/client"
+import { Router } from "express"
 
 const prisma = new PrismaClient()
 const router = Router()
 
-// Listar todas as mensagens do sistema (admin)
+// ==============================
+// 📋 LISTAR TODAS AS MENSAGENS (ADMIN)
+// ==============================
 router.get("/", async (req, res) => {
   try {
     const contatos = await prisma.contato.findMany({
       include: {
         animal: true,
-        cliente: true
+        remetente: true,
+        destinatario: true,
       },
-      orderBy: { criadoEm: "desc" }
+      orderBy: {
+        criadoEm: "desc",
+      },
     })
 
     res.status(200).json(contatos)

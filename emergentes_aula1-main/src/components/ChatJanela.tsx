@@ -1,20 +1,23 @@
 import { useState } from "react";
 
 type ChatJanelaProps = {
-  mensagens: any[];
+  conversa: {
+    animal: any;
+    cliente: any;
+    mensagens: any[];
+  };
   usuarioId?: number;
-  onNovaMensagem?: (msg: any) => void;
 };
 
 export default function ChatJanela({
-  mensagens,
+  conversa,
   usuarioId,
-  onNovaMensagem,
 }: ChatJanelaProps) {
   const [novaMensagem, setNovaMensagem] = useState("");
   const [enviando, setEnviando] = useState(false);
 
-  const animalId = mensagens[0]?.animal?.id;
+  const { mensagens, animal } = conversa;
+  const animalId = animal?.id;
 
   async function enviarMensagem() {
     if (!novaMensagem.trim() || !usuarioId || !animalId) return;
@@ -28,20 +31,17 @@ export default function ChatJanela({
         body: JSON.stringify({
           mensagem: novaMensagem,
           clienteId: usuarioId,
-          animalId: animalId,
+          animalId,
         }),
       });
 
       if (!resp.ok) throw new Error("Erro ao enviar mensagem");
 
-      const msgCriada = await resp.json();
       setNovaMensagem("");
-
-      // adiciona a mensagem no chat sem recarregar
-      onNovaMensagem?.(msgCriada);
+      // polling vai buscar automaticamente
     } catch (error) {
-      alert("Erro ao enviar mensagem");
       console.error(error);
+      alert("Erro ao enviar mensagem");
     } finally {
       setEnviando(false);
     }
@@ -51,13 +51,14 @@ export default function ChatJanela({
     <div className="flex flex-col flex-1 border-l">
       {/* Header */}
       <div className="p-4 border-b font-bold bg-gray-100">
-        Conversa sobre {mensagens[0]?.animal?.nome}
+        Conversa sobre {animal?.nome}
       </div>
 
       {/* Mensagens */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
         {mensagens.map((msg) => {
           const enviadaPorMim = msg.clienteId === usuarioId;
+
           return (
             <div
               key={msg.id}
