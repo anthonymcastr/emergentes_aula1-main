@@ -17,30 +17,37 @@ import AdminLayout from './Admin/AdminLayout.tsx';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+import App from './App.tsx'
+
 const rotas = createBrowserRouter([
   {
-    path: '/',
-    element: <Layout />,
+    element: <App />, // 👈 FUNDO GLOBAL
     children: [
-      { index: true, element: <Listagem /> }, // HOME
-      { path: 'inclusao', element: <Inclusao /> },
-      { path: 'inbox', element: <Inbox /> },
-      { path: 'sobre', element: <Sobre /> },
-      { path: 'login', element: <Login /> },
-      { path: 'cadastro', element: <Cadastro /> },
-      { path: 'login-admin', element: <LoginAdmin /> },
+      {
+        path: '/',
+        element: <Layout />, // 👈 layout público
+        children: [
+          { index: true, element: <Listagem /> },
+          { path: 'inclusao', element: <Inclusao /> },
+          { path: 'inbox', element: <Inbox /> },
+          { path: 'sobre', element: <Sobre /> },
+          { path: 'login', element: <Login /> },
+          { path: 'cadastro', element: <Cadastro /> },
+          { path: 'login-admin', element: <LoginAdmin /> },
+        ],
+      },
+      {
+        path: '/admin',
+        element: <AdminLayout />, // 👈 layout admin
+        children: [
+          { index: true, element: <Admin /> },
+          { path: 'listagem', element: <Listagem /> },
+          { path: 'contato', element: <Contato /> },
+        ],
+      },
     ],
   },
-  {
-    path: '/admin',
-    element: <AdminLayout />,
-    children: [
-      { index: true, element: <Admin /> },
-      { path: 'listagem', element: <Listagem /> },
-      { path: 'contato', element: <Contato /> },
-    ],
-  },
-]);
+])
 
 
 

@@ -13,10 +13,7 @@ export function CardAnimal({
   onExcluir,
   isAdmin,
 }: CardAnimalProps) {
-  const tipoConfig: Record<
-    string,
-    { label: string; bg: string }
-  > = {
+  const tipoConfig: Record<string, { label: string; bg: string }> = {
     PERDIDO: { label: "Perdido", bg: "bg-red-500" },
     ENCONTRADO: { label: "Encontrado", bg: "bg-green-500" },
     ADOCAO: { label: "Adoção", bg: "bg-blue-500" },
@@ -25,42 +22,83 @@ export function CardAnimal({
   const tipo = tipoConfig[data.tipo]
 
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden relative">
-      {/* Badge */}
-      <span
-        className={`absolute top-3 left-3 px-3 py-1 text-xs font-bold text-white rounded-full ${tipo.bg}`}
-      >
-        {tipo.label}
-      </span>
-
+    <div className="
+      bg-white
+      rounded-xl
+      shadow-md
+      overflow-hidden
+      w-full
+      max-w-xs
+      mx-auto
+      hover:shadow-lg
+      transition
+    ">
       {/* Imagem */}
-      <img
-        src={data.urlImagem}
-        alt={data.nome}
-        className="w-full h-48 object-cover"
-      />
+      <div className="relative">
+        <img
+          src={data.urlImagem}
+          alt={data.nome}
+          className="w-full h-44 sm:h-48 object-cover"
+        />
+
+        {/* Badge */}
+        <span
+          className={`absolute bottom-3 left-1/2 -translate-x-1/2 px-5 py-1 text-sm font-semibold text-white rounded-full ${tipo.bg}`}
+        >
+          {tipo.label}
+        </span>
+      </div>
 
       {/* Conteúdo */}
-      <div className="p-4">
-        <h3 className="text-xl font-extrabold text-gray-900">
+      <div className="p-4 text-center">
+        {/* Nome */}
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
           {data.nome}
         </h3>
 
-        <p className="text-gray-600 mt-1">
+        {/* Linha divisória */}
+        <div className="w-12 h-[2px] bg-gray-300 mx-auto my-2 rounded-full" />
+
+        {/* Raça */}
+        <p className="text-gray-600 text-sm">
           Raça: <span className="font-medium">{data.raca}</span>
         </p>
 
+        {/* Botão Ver Detalhes */}
         <button
           onClick={onFazerContato}
-          className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition"
+          className="
+            mt-4
+            w-full
+            bg-blue-900
+            hover:bg-blue-800
+            text-white
+            py-2
+            rounded-md
+            font-semibold
+            transition
+            cursor-pointer
+          "
         >
-          Ver detalhes
+          Ver Detalhes
         </button>
 
+        {/* Botão Excluir (Admin) */}
         {isAdmin && onExcluir && (
           <button
             onClick={() => onExcluir(data.id)}
-            className="mt-2 w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold transition"
+            className="
+              mt-2
+              w-full
+              bg-red-600
+              hover:bg-red-700
+              text-white
+              py-2
+              rounded-md
+              font-semibold
+              transition
+              cursor-pointer
+            "
           >
             Excluir
           </button>

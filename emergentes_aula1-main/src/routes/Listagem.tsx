@@ -33,7 +33,6 @@ export default function Listagem() {
   // 🔹 Filtro por tipo
   const filtrarPorTipo = (tipo: string) => {
     if (tipoAtivo === tipo) {
-      // remove filtro
       setAnimais(animaisOriginais)
       setTipoAtivo(null)
       return
@@ -47,7 +46,7 @@ export default function Listagem() {
     setTipoAtivo(tipo)
   }
 
-  // 🔹 Remover da lista ao excluir
+  // 🔹 Remover da lista
   const handleExcluido = (id: number) => {
     setAnimais((prev) => prev.filter((animal) => animal.id !== id))
     setAnimaisOriginais((prev) => prev.filter((animal) => animal.id !== id))
@@ -86,7 +85,7 @@ export default function Listagem() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen">
       {/* 🔍 FILTROS */}
       <section className="max-w-7xl mx-auto px-4 pt-8">
         <InputPesquisa
@@ -97,43 +96,28 @@ export default function Listagem() {
           }}
         />
 
-        {/* 🔘 Botões de tipo */}
-        <div className="flex justify-center gap-4 mt-6 flex-wrap">
-          <button
-            onClick={() => filtrarPorTipo("PERDIDO")}
-            className={`px-5 py-2 rounded-full font-semibold cursor-pointer
-              ${
-                tipoAtivo === "PERDIDO"
-                  ? "bg-red-600 text-white"
-                  : "bg-red-500 text-white hover:bg-red-600"
-              }`}
-          >
-            Perdidos
-          </button>
-
-          <button
-            onClick={() => filtrarPorTipo("ENCONTRADO")}
-            className={`px-5 py-2 rounded-full font-semibold cursor-pointer
-              ${
-                tipoAtivo === "ENCONTRADO"
-                  ? "bg-green-600 text-white"
-                  : "bg-green-500 text-white hover:bg-green-600"
-              }`}
-          >
-            Encontrados
-          </button>
-
-          <button
-            onClick={() => filtrarPorTipo("ADOCAO")}
-            className={`px-5 py-2 rounded-full font-semibold cursor-pointer
-              ${
-                tipoAtivo === "ADOCAO"
-                  ? "bg-blue-600 text-white"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
-              }`}
-          >
-            Para Adoção
-          </button>
+        {/* 🔘 Botões */}
+        <div className="flex justify-center gap-3 sm:gap-4 mt-6 flex-wrap">
+          {[
+            { tipo: "PERDIDO", label: "Perdidos", cor: "red" },
+            { tipo: "ENCONTRADO", label: "Encontrados", cor: "green" },
+            { tipo: "ADOCAO", label: "Para Adoção", cor: "blue" },
+          ].map((btn) => (
+            <button
+              key={btn.tipo}
+              onClick={() => filtrarPorTipo(btn.tipo)}
+              className={`
+                px-5 py-2 rounded-full font-semibold cursor-pointer transition
+                ${
+                  tipoAtivo === btn.tipo
+                    ? `bg-${btn.cor}-600 text-white`
+                    : `bg-${btn.cor}-500 text-white hover:bg-${btn.cor}-600`
+                }
+              `}
+            >
+              {btn.label}
+            </button>
+          ))}
         </div>
       </section>
 
@@ -150,7 +134,7 @@ export default function Listagem() {
         </p>
       </section>
 
-      {/* 🐾 GRID DE CARDS */}
+      {/* 🐾 GRID */}
       <section className="max-w-7xl mx-auto px-4 mt-12 pb-16">
         {cardSelecionado ? (
           <CardExpandido
@@ -161,7 +145,17 @@ export default function Listagem() {
             }
           />
         ) : (
-          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div
+            className="
+              grid
+              grid-cols-1
+              sm:grid-cols-2
+              md:grid-cols-3
+              lg:grid-cols-4
+              gap-8
+              place-items-center
+            "
+          >
             {animais.length > 0 ? (
               animais.map((animal) => (
                 <CardAnimal

@@ -1,13 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useClienteStore } from "../context/ClienteContext";
-import { useState } from "react";
 import { useAdminStore } from "../Admin/context/AdminContext";
+import { useState } from "react";
 
 export default function Titulo() {
   const { cliente, deslogaCliente } = useClienteStore();
+  const { admin, deslogaAdmin } = useAdminStore();
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
-  const { admin, deslogaAdmin } = useAdminStore();
 
   function handleLogout() {
     deslogaCliente();
@@ -15,93 +15,88 @@ export default function Titulo() {
     navigate("/login");
   }
 
-
-
-  const toggleMenu = () => setMenuAberto(!menuAberto);
-
   return (
-    <nav className="bg-blue-600 border-gray-200 dark:bg-gray-900">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="/img/logo_petpel.png" className="h-8" alt="Logo Petpel" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap text-white dark:text-white">
-            PetPel
-          </span>
+    <nav className="sticky top-0 z-50 bg-gradient-to-r from-blue-800 to-blue-700 shadow-md">
+      <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-3">
+        
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-3">
+          <img
+            src="/img/logo-novo-white.png"
+            alt="Logo Petpel"
+            className="h-16 transition-transform hover:scale-105"
+          />
         </Link>
 
-        {/* Botão Hamburger */}
+        {/* Hamburger */}
         <button
-          className="md:hidden flex flex-col justify-between w-6 h-5 focus:outline-none"
-          onClick={toggleMenu}
+          onClick={() => setMenuAberto(!menuAberto)}
+          className="md:hidden text-white focus:outline-none"
         >
-          <span className="block w-full h-0.5 bg-white"></span>
-          <span className="block w-full h-0.5 bg-white"></span>
-          <span className="block w-full h-0.5 bg-white"></span>
+          <svg
+            className="w-7 h-7"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
         </button>
 
-        {/* Lista desktop */}
+        {/* Menu */}
         <div
-          className={`${
-            menuAberto ? "block" : "hidden"
-          } w-full md:block md:w-auto`}
-          id="navbar-default"
+          className={`
+            ${menuAberto ? "block" : "hidden"}
+            md:flex md:items-center md:gap-8
+            absolute md:static top-full left-0 w-full md:w-auto
+            bg-blue-800 md:bg-transparent
+            shadow-md md:shadow-none
+          `}
         >
-          <ul className="font-medium flex flex-col p-4 md:flex-row md:space-x-5 md:p-0 rounded-lg  dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            <li>
-              <Link
-                to="/"
-                className="block py-2 px-3 text-white hover:font-bold rounded-sm md:bg-transparent md:p-0 md:hover:font-bold"
-                onClick={() => setMenuAberto(false)}
-              >
-                Home
-              </Link>
-            </li>
+          <ul className="flex flex-col md:flex-row gap-2 md:gap-8 px-4 py-4 md:p-0 text-white font-medium">
+            
+            <NavItem to="/" label="Home" onClick={() => setMenuAberto(false)} />
 
-            {!admin && !cliente ? (
-              <li>
-                <Link
-                  to="/login"
-                  className="block py-2 px-3 text-white hover:font-bold rounded-sm md:bg-transparent md:p-0 md:hover:font-bold"
-                  onClick={() => setMenuAberto(false)}
-                >
-                  Login
-                </Link>
-              </li>
-            ) : (
+            {!admin && !cliente && (
+              <NavItem to="/login" label="Login" onClick={() => setMenuAberto(false)} />
+            )}
+
+            {(cliente || admin) && (
               <>
-                <li>
-                  <Link
-                    to="/inclusao"
-                    className="block py-2 px-3 text-white hover:font-bold rounded-sm md:bg-transparent md:p-0 md:hover:font-bold"
-                    onClick={() => setMenuAberto(false)}
-                  >
-                    Inclusão
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/inbox"
-                    className="block py-2 px-3 hover:font-bold text-white md:p-0  md:hover:font-bold "
-                    onClick={() => setMenuAberto(false)}
-                  >
-                    Minhas Mensagens
-                  </Link>
-                </li>
+                <NavItem
+                  to="/inclusao"
+                  label="Inclusão"
+                  onClick={() => setMenuAberto(false)}
+                />
+                <NavItem
+                  to="/inbox"
+                  label="Minhas Mensagens"
+                  onClick={() => setMenuAberto(false)}
+                />
               </>
             )}
 
-
-
-          
-
-            { (cliente || admin) && (
+            {(cliente || admin) && (
               <li>
                 <button
                   onClick={() => {
                     handleLogout();
                     setMenuAberto(false);
                   }}
-                  className="block py-2 px-3 text-white hover:font-bold rounded-sm md:bg-transparent md:p-0 md:hover:font-extrabold  md:hover:cursor-pointer" 
+                  className="
+                    px-4 py-2
+                    rounded-full
+                    bg-white/10
+                    hover:bg-red-600
+                    transition
+                    cursor-pointer
+                    text-sm font-semibold
+                  "
                 >
                   Sair
                 </button>
@@ -111,5 +106,42 @@ export default function Titulo() {
         </div>
       </div>
     </nav>
+  );
+}
+
+/* Item reutilizável */
+function NavItem({
+  to,
+  label,
+  onClick,
+}: {
+  to: string;
+  label: string;
+  onClick?: () => void;
+}) {
+  return (
+    <li>
+      <Link
+        to={to}
+        onClick={onClick}
+        className="
+          relative
+          px-2 py-1
+          transition
+          hover:text-blue-200
+          after:content-['']
+          after:absolute
+          after:left-0
+          after:-bottom-1
+          after:w-0
+          after:h-0.5
+          after:bg-blue-200
+          after:transition-all
+          hover:after:w-full
+        "
+      >
+        {label}
+      </Link>
+    </li>
   );
 }
