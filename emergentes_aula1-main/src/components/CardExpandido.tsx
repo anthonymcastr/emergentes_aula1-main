@@ -16,54 +16,38 @@ export function CardExpandido({ animal, onClose, onExcluido }: Props) {
   const usuarioLogado = !!cliente;
   const isAdmin = cliente?.role === "admin";
   const apiUrl = import.meta.env.VITE_API_URL;
-  // 🔍 LOG ao montar o componente
-  console.log("=== CardExpandido MONTADO ===");
-  console.log("Animal recebido:", animal);
-  console.log("animal.usuario:", animal.usuario);
-  console.log("animal.usuarioId:", animal.usuarioId);
-  // ========================
-  // Enviar mensagem para dono do animal
-  // ========================
+
   const handleEnviar = async () => {
-    console.log("=== DEBUG ENVIAR MENSAGEM ===");
+    // Debug: ver o que está vindo
     console.log("Cliente logado:", cliente);
-    console.log("Cliente ID:", cliente?.id);
     console.log("Animal completo:", animal);
-    console.log("Animal.usuario:", animal.usuario);
-    console.log("Animal.usuarioId:", animal.usuarioId);
-    console.log("Animal.usuario?.id:", animal.usuario?.id);
+    console.log("animal.usuario:", animal.usuario);
+    console.log("animal.usuarioId:", animal.usuarioId);
 
     if (!cliente?.id) return alert("Você precisa estar logado");
     if (!mensagem.trim()) return alert("Digite uma mensagem");
 
-    // ✅ Verificação segura do dono do animal
-    // Tenta usar animal.usuario.id OU animal.usuarioId como fallback
+    // ✅ Usa usuario.id ou fallback para usuarioId
     const donoId = animal.usuario?.id || animal.usuarioId;
     console.log("donoId calculado:", donoId);
+    console.log("cliente.id:", cliente.id);
 
-    if (!donoId) {
-      console.error("ERRO: Não foi possível determinar o dono do animal");
-      console.error("animal.usuario:", animal.usuario);
-      console.error("animal.usuarioId:", animal.usuarioId);
-      return alert("Erro: dono do animal não encontrado");
-    }
+    if (!donoId) return alert("Erro: dono do animal não encontrado");
 
-    // Evita enviar mensagem para si mesmo
-    if (cliente.id === donoId) {
+    if (cliente.id === donoId)
       return alert("Você não pode enviar mensagem para si mesmo");
-    }
 
     try {
       setEnviando(true);
 
       const payload = {
         mensagem,
-        animalId: animal.id,
-        remetenteId: cliente.id, // quem está enviando
-        destinatarioId: donoId, // dono do animal
+        animalId: Number(animal.id),
+        remetenteId: Number(cliente.id),
+        destinatarioId: Number(donoId),
       };
-      console.log("Payload enviado:", payload);
-      console.log("URL:", `${apiUrl}/contatos`);
+
+      console.log("Payload a ser enviado:", JSON.stringify(payload));
 
       const res = await fetch(`${apiUrl}/contatos`, {
         method: "POST",
@@ -77,8 +61,6 @@ export function CardExpandido({ animal, onClose, onExcluido }: Props) {
         throw new Error(erro?.erro || "Erro ao enviar mensagem");
       }
 
-      const resultado = await res.json();
-      console.log("Resposta sucesso:", resultado);
       setMensagem("");
       alert("Mensagem enviada com sucesso!");
     } catch (err) {
@@ -89,9 +71,6 @@ export function CardExpandido({ animal, onClose, onExcluido }: Props) {
     }
   };
 
-  // ========================
-  // Excluir animal (apenas admin)
-  // ========================
   const handleExcluir = async () => {
     if (!confirm("Deseja realmente excluir este animal?")) return;
 
@@ -127,7 +106,7 @@ export function CardExpandido({ animal, onClose, onExcluido }: Props) {
           ✕
         </button>
 
-        {/* Imagem do animal */}
+        {/* Imagem */}
         <img
           src={animal.urlImagem}
           alt={animal.nome}
@@ -155,7 +134,7 @@ export function CardExpandido({ animal, onClose, onExcluido }: Props) {
           </p>
         </div>
 
-        {/* Área de mensagem */}
+        {/* Mensagem */}
         <textarea
           value={mensagem}
           onChange={(e) => setMensagem(e.target.value)}
