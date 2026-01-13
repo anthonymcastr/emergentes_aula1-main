@@ -121,9 +121,31 @@ export default function Inbox() {
     }
   }, [conversas, conversaSelecionada]);
 
+  // ✅ Marca mensagens como lidas ao selecionar conversa
+  async function handleSelectConversa(chave: string) {
+    setConversaSelecionada(chave);
+
+    const conversa = conversas[chave];
+    if (!conversa || !cliente?.id) return;
+
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/contatos/marcar-lidas`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          usuarioId: cliente.id,
+          animalId: conversa.animal.id,
+          outroUsuarioId: conversa.outroUsuario.id,
+        }),
+      });
+    } catch (err) {
+      console.error("Erro ao marcar mensagens como lidas:", err);
+    }
+  }
+
   return (
     <div className="flex h-screen bg-gray-100">
-      <ConversaLista conversas={conversas} onSelect={setConversaSelecionada} />
+      <ConversaLista conversas={conversas} onSelect={handleSelectConversa} />
 
       {conversaSelecionada ? (
         <ChatJanela

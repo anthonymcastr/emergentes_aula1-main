@@ -150,7 +150,7 @@ export default function Listagem() {
             }
           />
         ) : (
-          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center">
             {animais.length > 0 ? (
               animais.map((animal) => (
                 <CardAnimal
@@ -162,7 +162,7 @@ export default function Listagem() {
                 />
               ))
             ) : (
-              <p className="text-gray-500 text-center w-full">
+              <p className="text-gray-500 text-center col-span-full">
                 Nenhum animal encontrado
               </p>
             )}

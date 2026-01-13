@@ -2,6 +2,7 @@ import { PrismaClient, TipoAnimal, tipoCidade } from "@prisma/client"
 import { Router } from "express"
 import { z } from "zod"
 import { autentica, AuthRequest } from "../middleware/autentica"
+import { enviarEmail } from "../utils/email"
 
 const prisma = new PrismaClient()
 const router = Router()
@@ -113,6 +114,41 @@ router.post("/", async (req, res) => {
       data: { nome, idade, raca, urlImagem, tipo, cidade, usuarioId },
       include: includeUsuario,
     })
+
+    // 📧 Email de confirmação de cadastro
+    if (animal.usuario?.email) {
+      const tipoTexto = tipo === "ADOCAO" ? "para adoção" : tipo === "PERDIDO" ? "perdido" : "encontrado"
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1e3a8a;">🐾 Cadastro realizado com sucesso!</h2>
+          <p>Olá, <strong>${animal.usuario.nome}</strong>!</p>
+          <p>Seu pet <strong>${nome}</strong> foi cadastrado com sucesso na plataforma PetPel.</p>
+          <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>Detalhes do cadastro:</strong></p>
+            <ul style="list-style: none; padding: 0;">
+              <li>🐶 <strong>Nome:</strong> ${nome}</li>
+              <li>📍 <strong>Tipo:</strong> ${tipoTexto}</li>
+              <li>🐾 <strong>Raça:</strong> ${raca}</li>
+              <li>🎂 <strong>Idade:</strong> ${idade} anos</li>
+              <li>🏙️ <strong>Cidade:</strong> ${cidade}</li>
+            </ul>
+          </div>
+          <p>Agora outras pessoas poderão visualizar e entrar em contato sobre o ${nome}.</p>
+          <p style="color: #6b7280; font-size: 12px;">Equipe PetPel RS</p>
+        </div>
+      `
+
+      try {
+        await enviarEmail(
+          animal.usuario.email,
+          `✅ ${nome} cadastrado com sucesso no PetPel`,
+          html
+        )
+      } catch (err) {
+        console.warn("Erro ao enviar e-mail de confirmação:", err)
+      }
+    }
+
     res.status(201).json(animal)
   } catch (error) {
     console.error(error)

@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useClienteStore } from "../context/ClienteContext";
 import { useAdminStore } from "../Admin/context/AdminContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Titulo() {
   const { cliente, deslogaCliente } = useClienteStore();
@@ -9,6 +9,32 @@ export default function Titulo() {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuAberto, setMenuAberto] = useState(false);
+  const [mensagensNaoLidas, setMensagensNaoLidas] = useState(0);
+
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+  // Busca mensagens não lidas
+  useEffect(() => {
+    async function buscarNaoLidas() {
+      if (!cliente?.id) return;
+
+      try {
+        console.log("Buscando mensagens não lidas para cliente:", cliente.id);
+        const res = await fetch(`${apiUrl}/contatos/nao-lidas/${cliente.id}`);
+        console.log("Response status:", res.status);
+        const data = await res.json();
+        console.log("Data recebida:", data);
+        setMensagensNaoLidas(data.naoLidas || 0);
+      } catch (err) {
+        console.error("Erro ao buscar mensagens não lidas:", err);
+      }
+    }
+
+    buscarNaoLidas();
+    // Atualiza a cada 30 segundos
+    const interval = setInterval(buscarNaoLidas, 30000);
+    return () => clearInterval(interval);
+  }, [cliente?.id, apiUrl]);
 
   function handleLogout() {
     deslogaCliente();
@@ -65,7 +91,7 @@ export default function Titulo() {
             shadow-md md:shadow-none
           `}
         >
-          <ul className="flex flex-col md:flex-row gap-2 md:gap-8 px-4 py-4 md:p-0 text-white font-medium">
+          <ul className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8 px-4 py-4 md:p-0 text-white font-medium">
             <NavItem
               to="/"
               label="Home"
@@ -90,11 +116,26 @@ export default function Titulo() {
                   label="Inclusão"
                   onClick={() => setMenuAberto(false)}
                 />
-                <NavItem
-                  to="/inbox"
-                  label="Minhas Mensagens"
-                  onClick={() => setMenuAberto(false)}
-                />
+                <li>
+                  <Link
+                    to="/inbox"
+                    onClick={() => setMenuAberto(false)}
+                    className="
+                      relative
+                      px-2 py-1
+                      transition
+                      hover:text-blue-200
+                      flex items-center gap-2
+                    "
+                  >
+                    Minhas Mensagens
+                    {mensagensNaoLidas > 0 && (
+                      <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 min-w-5 flex items-center justify-center px-1">
+                        {mensagensNaoLidas > 99 ? "99+" : mensagensNaoLidas}
+                      </span>
+                    )}
+                  </Link>
+                </li>
               </>
             )}
 
