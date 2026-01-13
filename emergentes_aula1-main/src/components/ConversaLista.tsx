@@ -1,6 +1,6 @@
 type Conversa = {
   animal: any;
-  cliente: any;
+  outroUsuario: any;
   mensagens: any[];
 };
 
@@ -38,9 +38,7 @@ export default function ConversaLista({ conversas, onSelect }: Props) {
               />
 
               <div className="flex-1">
-                <p className="font-semibold">
-                  {conversa.animal.nome}
-                </p>
+                <p className="font-semibold">{conversa.animal.nome}</p>
 
                 <p className="text-sm text-gray-500 truncate">
                   {ultimaMensagem?.mensagem}

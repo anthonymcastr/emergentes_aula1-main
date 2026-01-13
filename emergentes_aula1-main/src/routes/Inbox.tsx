@@ -11,13 +11,17 @@ export type Mensagem = {
   id: number;
   mensagem: string;
   criadoEm: string;
+  animalId: number;
+  remetenteId: number;
+  destinatarioId: number;
   animal: any;
-  cliente: any;
+  remetente: any;
+  destinatario: any;
 };
 
 export type Conversa = {
   animal: any;
-  cliente: any;
+  outroUsuario: any; // o outro participante da conversa
   mensagens: Mensagem[];
 };
 
@@ -26,8 +30,9 @@ export default function Inbox() {
 
   // ⚠️ AQUI estava um dos problemas: não use any[]
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
-  const [conversaSelecionada, setConversaSelecionada] =
-    useState<string | null>(null);
+  const [conversaSelecionada, setConversaSelecionada] = useState<string | null>(
+    null
+  );
 
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -36,7 +41,9 @@ export default function Inbox() {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/contatos/inbox/${cliente.id}?tipo=cliente`
+        `${import.meta.env.VITE_API_URL}/contatos/inbox/${
+          cliente.id
+        }?tipo=cliente`
       );
 
       const data: Mensagem[] = await res.json();
@@ -52,8 +59,7 @@ export default function Inbox() {
 
         return Array.from(mapa.values()).sort(
           (a, b) =>
-            new Date(a.criadoEm).getTime() -
-            new Date(b.criadoEm).getTime()
+            new Date(a.criadoEm).getTime() - new Date(b.criadoEm).getTime()
         );
       });
     } catch (error) {
@@ -79,14 +85,18 @@ export default function Inbox() {
 
   const conversas: Record<string, Conversa> = mensagens.reduce(
     (acc: Record<string, Conversa>, msg: Mensagem) => {
-      if (!msg.animal || !msg.cliente) return acc;
+      if (!msg.animal || !msg.remetente || !msg.destinatario) return acc;
 
-      const chave = `${msg.animal.id}-${msg.cliente.id}`;
+      // Determina quem é o "outro" na conversa
+      const outroUsuario =
+        msg.remetenteId === cliente?.id ? msg.destinatario : msg.remetente;
+
+      const chave = `${msg.animal.id}-${outroUsuario.id}`;
 
       if (!acc[chave]) {
         acc[chave] = {
           animal: msg.animal,
-          cliente: msg.cliente,
+          outroUsuario,
           mensagens: [],
         };
       }
@@ -100,28 +110,20 @@ export default function Inbox() {
   // 🔁 ordena mensagens internas de cada conversa
   Object.values(conversas).forEach((conversa) => {
     conversa.mensagens.sort(
-      (a, b) =>
-        new Date(a.criadoEm).getTime() -
-        new Date(b.criadoEm).getTime()
+      (a, b) => new Date(a.criadoEm).getTime() - new Date(b.criadoEm).getTime()
     );
   });
 
   // 🧹 se a conversa selecionada sumir, limpa
   useEffect(() => {
-    if (
-      conversaSelecionada &&
-      !conversas[conversaSelecionada]
-    ) {
+    if (conversaSelecionada && !conversas[conversaSelecionada]) {
       setConversaSelecionada(null);
     }
   }, [conversas, conversaSelecionada]);
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <ConversaLista
-        conversas={conversas}
-        onSelect={setConversaSelecionada}
-      />
+      <ConversaLista conversas={conversas} onSelect={setConversaSelecionada} />
 
       {conversaSelecionada ? (
         <ChatJanela

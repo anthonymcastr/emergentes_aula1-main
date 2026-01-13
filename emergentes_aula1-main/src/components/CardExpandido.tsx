@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { AnimalComUsuario } from "../utils/AnimalType";
 import { useClienteStore } from "../context/ClienteContext";
 
@@ -12,6 +13,7 @@ export function CardExpandido({ animal, onClose, onExcluido }: Props) {
   const [mensagem, setMensagem] = useState("");
   const [enviando, setEnviando] = useState(false);
   const { cliente } = useClienteStore();
+  const navigate = useNavigate();
 
   const usuarioLogado = !!cliente;
   const isAdmin = cliente?.role === "admin";
@@ -53,6 +55,8 @@ export function CardExpandido({ animal, onClose, onExcluido }: Props) {
 
       setMensagem("");
       alert("Mensagem enviada com sucesso!");
+      onClose();
+      navigate("/inbox");
     } catch (err) {
       console.error(err);
       alert("Erro ao enviar mensagem");

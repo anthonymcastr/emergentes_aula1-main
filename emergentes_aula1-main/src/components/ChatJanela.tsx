@@ -3,24 +3,23 @@ import { useState } from "react";
 type ChatJanelaProps = {
   conversa: {
     animal: any;
-    cliente: any;
+    outroUsuario: any;
     mensagens: any[];
   };
   usuarioId?: number;
 };
 
-export default function ChatJanela({
-  conversa,
-  usuarioId,
-}: ChatJanelaProps) {
+export default function ChatJanela({ conversa, usuarioId }: ChatJanelaProps) {
   const [novaMensagem, setNovaMensagem] = useState("");
   const [enviando, setEnviando] = useState(false);
 
-  const { mensagens, animal } = conversa;
+  const { mensagens, animal, outroUsuario } = conversa;
   const animalId = animal?.id;
+  const destinatarioId = outroUsuario?.id;
 
   async function enviarMensagem() {
-    if (!novaMensagem.trim() || !usuarioId || !animalId) return;
+    if (!novaMensagem.trim() || !usuarioId || !animalId || !destinatarioId)
+      return;
 
     setEnviando(true);
 
@@ -30,8 +29,9 @@ export default function ChatJanela({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mensagem: novaMensagem,
-          clienteId: usuarioId,
-          animalId,
+          remetenteId: Number(usuarioId),
+          destinatarioId: Number(destinatarioId),
+          animalId: Number(animalId),
         }),
       });
 
@@ -57,7 +57,7 @@ export default function ChatJanela({
       {/* Mensagens */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
         {mensagens.map((msg) => {
-          const enviadaPorMim = msg.clienteId === usuarioId;
+          const enviadaPorMim = msg.remetenteId === usuarioId;
 
           return (
             <div
