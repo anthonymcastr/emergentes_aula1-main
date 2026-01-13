@@ -1,4 +1,5 @@
-import { Outlet } from "react-router-dom"
+import { Outlet } from "react-router-dom";
+import { Toaster } from "sonner";
 
 export default function App() {
   return (
@@ -11,7 +12,8 @@ export default function App() {
         bg-no-repeat
       "
     >
+      <Toaster richColors position="top-center" />
       <Outlet />
     </div>
-  )
+  );
 }
