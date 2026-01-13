@@ -1,18 +1,17 @@
 import nodemailer from "nodemailer"
 
 export const transporter = nodemailer.createTransport({
-  host: process.env.MAILTRAP_HOST,
-  port: Number(process.env.MAILTRAP_PORT),
+  service: "gmail",
   auth: {
-    user: process.env.MAILTRAP_USER,
-    pass: process.env.MAILTRAP_PASS
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD
   }
 })
 
 export async function enviarEmail(destinatario: string, assunto: string, corpoHtml: string) {
   try {
     const info = await transporter.sendMail({
-      from: `"PetPel" <${process.env.MAILTRAP_FROM}>`,
+      from: `"PetPel" <${process.env.GMAIL_USER}>`,
       to: destinatario,
       subject: assunto,
       html: corpoHtml
