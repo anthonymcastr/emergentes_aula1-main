@@ -24,7 +24,7 @@ export default function Titulo() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-gradient-to-r from-blue-800 to-blue-700 shadow-md">
+    <nav className="sticky top-0 z-50 bg-blue-900 shadow-md">
       <div className="w-full flex items-center justify-between px-8 py-3">
         {/* Logo */}
         <Link to="/" onClick={handleHomeClick} className="flex items-center">

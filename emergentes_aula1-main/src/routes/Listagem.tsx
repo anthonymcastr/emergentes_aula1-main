@@ -150,7 +150,7 @@ export default function Listagem() {
             }
           />
         ) : (
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
             {animais.length > 0 ? (
               animais.map((animal) => (
                 <CardAnimal
