@@ -134,7 +134,7 @@ export default function Listagem() {
             Pet
           </span>
         </h1>
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-gray-800">
           Animais perdidos, encontrados e para adoção em Pelotas
         </p>
       </section>
