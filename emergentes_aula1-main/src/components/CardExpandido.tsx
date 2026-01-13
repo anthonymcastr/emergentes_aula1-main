@@ -18,19 +18,11 @@ export function CardExpandido({ animal, onClose, onExcluido }: Props) {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleEnviar = async () => {
-    // Debug: ver o que está vindo
-    console.log("Cliente logado:", cliente);
-    console.log("Animal completo:", animal);
-    console.log("animal.usuario:", animal.usuario);
-    console.log("animal.usuarioId:", animal.usuarioId);
-
     if (!cliente?.id) return alert("Você precisa estar logado");
     if (!mensagem.trim()) return alert("Digite uma mensagem");
 
-    // ✅ Usa usuario.id ou fallback para usuarioId
+    // Usa usuario.id ou fallback para usuarioId
     const donoId = animal.usuario?.id || animal.usuarioId;
-    console.log("donoId calculado:", donoId);
-    console.log("cliente.id:", cliente.id);
 
     if (!donoId) return alert("Erro: dono do animal não encontrado");
 
@@ -46,8 +38,6 @@ export function CardExpandido({ animal, onClose, onExcluido }: Props) {
         remetenteId: Number(cliente.id),
         destinatarioId: Number(donoId),
       };
-
-      console.log("Payload a ser enviado:", JSON.stringify(payload));
 
       const res = await fetch(`${apiUrl}/contatos`, {
         method: "POST",
