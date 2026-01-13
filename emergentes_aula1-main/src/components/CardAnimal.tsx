@@ -1,11 +1,11 @@
-import type { Animal } from "../utils/AnimalType"
+import type { Animal } from "../utils/AnimalType";
 
 type CardAnimalProps = {
-  data: Animal
-  onFazerContato?: () => void
-  onExcluir?: (id: number) => void
-  isAdmin?: boolean
-}
+  data: Animal;
+  onFazerContato?: () => void;
+  onExcluir?: (id: number) => void;
+  isAdmin?: boolean;
+};
 
 export function CardAnimal({
   data,
@@ -17,18 +17,18 @@ export function CardAnimal({
     PERDIDO: { label: "Perdido", bg: "bg-red-500" },
     ENCONTRADO: { label: "Encontrado", bg: "bg-green-500" },
     ADOCAO: { label: "Adoção", bg: "bg-blue-500" },
-  }
+  };
 
-  const tipo = tipoConfig[data.tipo]
+  const tipo = tipoConfig[data.tipo];
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden w-full max-w-xs mx-auto hover:shadow-lg transition">
+    <div className="bg-white rounded-xl shadow-md overflow-hidden w-full max-w-xs h-[380px] mx-auto hover:shadow-lg transition flex flex-col">
       {/* Imagem */}
-      <div className="relative">
+      <div className="relative h-48 flex-shrink-0">
         <img
           src={data.urlImagem}
           alt={data.nome}
-          className="w-full h-44 sm:h-48 object-cover"
+          className="w-full h-full object-cover"
         />
         {/* Badge */}
         <span
@@ -39,8 +39,10 @@ export function CardAnimal({
       </div>
 
       {/* Conteúdo */}
-      <div className="p-4 text-center">
-        <h3 className="text-xl sm:text-2xl font-bold text-gray-900">{data.nome}</h3>
+      <div className="p-4 text-center flex-1 flex flex-col justify-between">
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
+          {data.nome}
+        </h3>
         <div className="w-12 h-[2px] bg-gray-300 mx-auto my-2 rounded-full" />
         <p className="text-gray-600 text-sm">
           Raça: <span className="font-medium">{data.raca}</span>
@@ -65,5 +67,5 @@ export function CardAnimal({
         )}
       </div>
     </div>
-  )
+  );
 }

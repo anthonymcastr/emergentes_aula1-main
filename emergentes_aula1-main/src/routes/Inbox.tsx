@@ -80,7 +80,7 @@ export default function Inbox() {
 
   /* =======================
      AGRUPA POR CONVERSA
-     (ANIMAL + CLIENTE)
+     (ANIMAL + OUTRO USUÁRIO)
   ======================= */
 
   const conversas: Record<string, Conversa> = mensagens.reduce(

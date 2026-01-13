@@ -15,10 +15,9 @@ export function InputPesquisa({ setAnimais }: Props) {
 
     setLoading(true);
     try {
+      const apiUrl = import.meta.env.VITE_API_URL;
       const resposta = await fetch(
-        `https://emergentes-aula1-main-6evg.vercel.app/animais/pesquisa?termo=${encodeURIComponent(
-          termo
-        )}`
+        `${apiUrl}/animais/pesquisa?termo=${encodeURIComponent(termo)}`
       );
 
       if (!resposta.ok) {
@@ -43,7 +42,7 @@ export function InputPesquisa({ setAnimais }: Props) {
             type="search"
             value={termo}
             onChange={(e) => setTermo(e.target.value)}
-            placeholder="Informe o tipo que você busca.."
+            placeholder="Buscar por nome ou raça do animal..."
             className="w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-2xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
           />
           <button

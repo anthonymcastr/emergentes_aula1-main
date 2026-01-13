@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useClienteStore } from "../context/ClienteContext";
 import { useAdminStore } from "../Admin/context/AdminContext";
 import { useState } from "react";
@@ -7,6 +7,7 @@ export default function Titulo() {
   const { cliente, deslogaCliente } = useClienteStore();
   const { admin, deslogaAdmin } = useAdminStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuAberto, setMenuAberto] = useState(false);
 
   function handleLogout() {
@@ -15,12 +16,18 @@ export default function Titulo() {
     navigate("/login");
   }
 
+  function handleHomeClick() {
+    // Se já está na home, força reload para limpar filtros
+    if (location.pathname === "/") {
+      window.location.reload();
+    }
+  }
+
   return (
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-blue-800 to-blue-700 shadow-md">
-      <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-3">
-        
+      <div className="w-full flex items-center justify-between px-8 py-3">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" onClick={handleHomeClick} className="flex items-center">
           <img
             src="/img/logo-novo-white.png"
             alt="Logo Petpel"
@@ -59,11 +66,21 @@ export default function Titulo() {
           `}
         >
           <ul className="flex flex-col md:flex-row gap-2 md:gap-8 px-4 py-4 md:p-0 text-white font-medium">
-            
-            <NavItem to="/" label="Home" onClick={() => setMenuAberto(false)} />
+            <NavItem
+              to="/"
+              label="Home"
+              onClick={() => {
+                handleHomeClick();
+                setMenuAberto(false);
+              }}
+            />
 
             {!admin && !cliente && (
-              <NavItem to="/login" label="Login" onClick={() => setMenuAberto(false)} />
+              <NavItem
+                to="/login"
+                label="Login"
+                onClick={() => setMenuAberto(false)}
+              />
             )}
 
             {(cliente || admin) && (
@@ -82,20 +99,20 @@ export default function Titulo() {
             )}
 
             {(cliente || admin) && (
-              <li>
+              <li className="flex items-center">
                 <button
                   onClick={() => {
                     handleLogout();
                     setMenuAberto(false);
                   }}
                   className="
-                    px-4 py-2
+                    px-4 py-1
                     rounded-full
                     bg-white/10
                     hover:bg-red-600
                     transition
                     cursor-pointer
-                    text-sm font-semibold
+                    font-medium
                   "
                 >
                   Sair

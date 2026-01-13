@@ -59,26 +59,18 @@ router.get("/pesquisa", async (req, res) => {
   const termo = (req.query.termo as string)?.trim()
   if (!termo) return res.status(400).json({ erro: "O termo de busca é obrigatório" })
 
-  const filtros: any[] = []
-  const termoUpper = termo.toUpperCase()
-
-  if (Object.values(TipoAnimal).includes(termoUpper as TipoAnimal)) {
-    filtros.push({ tipo: termoUpper as TipoAnimal })
-  }
-
-  if (Object.values(tipoCidade).includes(termoUpper as tipoCidade)) {
-    filtros.push({ cidade: termoUpper as tipoCidade })
-  }
-
-  filtros.push({ raca: { equals: termo, mode: "insensitive" } })
-
   try {
     const resultados = await prisma.animal.findMany({
-      where: { OR: filtros },
+      where: {
+        OR: [
+          { nome: { contains: termo, mode: "insensitive" } },
+          { raca: { contains: termo, mode: "insensitive" } },
+        ],
+      },
       include: includeUsuario,
     })
 
-    // ✅ Filtra animais sem usuário (só por precaução)
+    // Filtra animais sem usuário (só por precaução)
     const resultadosComUsuario = resultados.filter((a) => a.usuario !== null)
     res.status(200).json(resultadosComUsuario)
   } catch (error) {

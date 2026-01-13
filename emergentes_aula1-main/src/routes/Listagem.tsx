@@ -8,7 +8,8 @@ import { useAdminStore } from "../Admin/context/AdminContext";
 export default function Listagem() {
   const [animais, setAnimais] = useState<Animal[]>([]);
   const [animaisOriginais, setAnimaisOriginais] = useState<Animal[]>([]);
-  const [cardSelecionado, setCardSelecionado] = useState<AnimalComUsuario | null>(null);
+  const [cardSelecionado, setCardSelecionado] =
+    useState<AnimalComUsuario | null>(null);
   const [tipoAtivo, setTipoAtivo] = useState<string | null>(null);
   const [loadingDetalhe, setLoadingDetalhe] = useState(false);
 
@@ -77,7 +78,10 @@ export default function Listagem() {
 
       const res = await fetch(`${apiUrl}/animais/${id}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (!res.ok) throw new Error("Erro ao excluir");
@@ -141,10 +145,12 @@ export default function Listagem() {
           <CardExpandido
             animal={cardSelecionado}
             onClose={() => setCardSelecionado(null)}
-            onExcluido={() => cardSelecionado && handleExcluido(cardSelecionado.id)}
+            onExcluido={() =>
+              cardSelecionado && handleExcluido(cardSelecionado.id)
+            }
           />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 place-items-center">
+          <div className="flex flex-wrap justify-center gap-8">
             {animais.length > 0 ? (
               animais.map((animal) => (
                 <CardAnimal
@@ -156,7 +162,7 @@ export default function Listagem() {
                 />
               ))
             ) : (
-              <p className="text-gray-500 text-center col-span-full">
+              <p className="text-gray-500 text-center w-full">
                 Nenhum animal encontrado
               </p>
             )}
