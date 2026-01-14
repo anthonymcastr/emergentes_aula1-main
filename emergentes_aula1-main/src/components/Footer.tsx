@@ -18,13 +18,22 @@ export default function Footer() {
         <div>
           <h3 className="text-lg font-bold text-white mb-3">Siga-nos</h3>
           <div className="flex gap-4">
-            <a href="#" className="hover:scale-110 transition">
+            <a
+              href="https://www.instagram.com/anthonymcastr/"
+              className="hover:scale-110 transition"
+            >
               <img src="/img/insta-logo.png" alt="Instagram" className="h-8" />
             </a>
-            <a href="#" className="hover:scale-110 transition">
+            <a
+              href="https://web.facebook.com/anthony.castro.245117"
+              className="hover:scale-110 transition"
+            >
               <img src="/img/face-logo.png" alt="Facebook" className="h-8" />
             </a>
-            <a href="#" className="hover:scale-110 transition">
+            <a
+              href="https://www.linkedin.com/in/anthony-martins-de-castro/"
+              className="hover:scale-110 transition"
+            >
               <img
                 src="/img/linkedin-logo.png"
                 alt="LinkedIn"
@@ -42,22 +51,9 @@ export default function Footer() {
             📧 <strong>Email:</strong> anthonymartins19977@gmail.com
           </p>
 
-          <div className="flex items-center gap-3 mt-3">
-            <span className="text-sm">
-              📱 <strong>(53) 99170-6490</strong>
-            </span>
-            <a
-              href="https://w.app/petpelrs"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src="/img/logozap.png"
-                alt="Whatsapp"
-                className="h-10 hover:scale-105 transition"
-              />
-            </a>
-          </div>
+          <p className="text-sm">
+            📱 <strong>(53) 99170-6490</strong>
+          </p>
         </div>
       </div>
 

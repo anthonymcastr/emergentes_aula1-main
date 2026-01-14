@@ -64,7 +64,7 @@ export default function Titulo() {
         {/* Hamburger */}
         <button
           onClick={() => setMenuAberto(!menuAberto)}
-          className="md:hidden text-white focus:outline-none"
+          className="md:hidden text-white focus:outline-none cursor-pointer"
         >
           <svg
             className="w-7 h-7"
