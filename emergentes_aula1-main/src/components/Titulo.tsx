@@ -57,7 +57,7 @@ export default function Titulo() {
           <img
             src="/img/logo-novo-white.png"
             alt="Logo Petpel"
-            className="h-16 transition-transform hover:scale-105"
+            className="h-16 transition-transform hover:scale-105 ml-[-15px] "
           />
         </Link>
 

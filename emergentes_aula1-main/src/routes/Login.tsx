@@ -105,7 +105,7 @@ export default function Login() {
               </div>
               <button
                 type="submit"
-                className="w-full text-white bg-orange-600 hover:bg-orange-700 font-medium rounded-lg py-2.5"
+                className="w-full text-white bg-blue-800 hover:cursor-pointer hover:bg-blue-900 font-medium rounded-lg py-2.5"
               >
                 Entrar
               </button>
@@ -116,7 +116,7 @@ export default function Login() {
               Não tem uma conta?{" "}
               <Link
                 to="/cadastro"
-                className="text-orange-600 hover:underline dark:text-orange-400"
+                className="text-blue-800 hover:underline dark:text-blue-600"
               >
                 Cadastre-se
               </Link>
