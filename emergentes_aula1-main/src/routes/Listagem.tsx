@@ -140,7 +140,7 @@ export default function Listagem() {
       </section>
 
       {/* Grid ou detalhe */}
-      <section className="max-w-7xl mx-auto px-4 mt-12 pb-16">
+      <section className="flex justify-center px-4 mt-12 pb-16">
         {cardSelecionado ? (
           <CardExpandido
             animal={cardSelecionado}
@@ -150,19 +150,32 @@ export default function Listagem() {
             }
           />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center">
+          <div
+            className="
+              flex
+              flex-nowrap
+              justify-center
+              gap-6
+              max-w-6xl
+              mx-auto
+              overflow-x-auto
+              pb-2
+            "
+          >
             {animais.length > 0 ? (
               animais.map((animal) => (
-                <CardAnimal
-                  key={animal.id}
-                  data={animal}
-                  onFazerContato={() => handleVerDetalhes(animal.id)}
-                  isAdmin={isAdmin}
-                  onExcluir={excluirAnimal}
-                />
+                <div className="min-w-[300px] max-w-xs flex-shrink-0">
+                  <CardAnimal
+                    key={animal.id}
+                    data={animal}
+                    onFazerContato={() => handleVerDetalhes(animal.id)}
+                    isAdmin={isAdmin}
+                    onExcluir={excluirAnimal}
+                  />
+                </div>
               ))
             ) : (
-              <p className="text-gray-500 text-center col-span-full">
+              <p className="text-gray-500 text-center w-full">
                 Nenhum animal encontrado
               </p>
             )}
