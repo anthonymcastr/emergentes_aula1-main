@@ -81,7 +81,8 @@ router.post("/cadastro", async (req, res) => {
       </div>
     `
     
-    enviarEmail(email, "🐾 Bem-vindo ao PetPel!", emailHtml)
+    await enviarEmail(email, "🐾 Bem-vindo ao PetPel!", emailHtml)
+
 
     res.status(201).json({
       id: cliente.id,
