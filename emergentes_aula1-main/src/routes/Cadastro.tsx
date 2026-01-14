@@ -271,7 +271,7 @@ export default function Cadastro() {
                 href="/login"
                 className="text-orange-600 hover:underline dark:text-orange-400"
               >
-                Faça login
+                Faça login!
               </a>
             </p>
           </form>
