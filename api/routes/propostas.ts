@@ -74,7 +74,7 @@ router.post("/", async (req, res) => {
           </div>
           <p><strong>De:</strong> ${contato.remetente.nome}</p>
           <p style="margin-top: 20px;">
-            <a href="https://emergentes-aula1-main.vercel.app/inbox" 
+            <a href="https://www.petpelrs.com.br/inbox" 
                style="background: #1e3a8a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
               Responder mensagem
             </a>
