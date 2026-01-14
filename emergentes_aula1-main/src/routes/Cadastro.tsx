@@ -307,7 +307,7 @@ export default function Cadastro() {
               disabled={!senhaValida}
               className={`w-full text-white font-medium rounded-lg py-2.5 transition ${
                 senhaValida
-                  ? "bg-orange-600 hover:bg-orange-700 cursor-pointer"
+                  ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
@@ -318,7 +318,7 @@ export default function Cadastro() {
               Já tem uma conta?{" "}
               <a
                 href="/login"
-                className="text-orange-600 hover:underline dark:text-orange-400"
+                className="text-blue-600 hover:underline dark:text-blue-400"
               >
                 Faça login!
               </a>
