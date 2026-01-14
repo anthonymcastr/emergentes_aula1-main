@@ -105,7 +105,7 @@ export default function Listagem() {
             setTipoAtivo(null);
           }}
         />
-        <div className="flex justify-center gap-3 sm:gap-4 mt-6 flex-wrap">
+        <div className="flex justify-center gap-2 sm:gap-3 mt-6 flex-wrap">
           {[
             { tipo: "PERDIDO", label: "Perdidos", cor: "red" },
             { tipo: "ENCONTRADO", label: "Encontrados", cor: "green" },
@@ -114,7 +114,7 @@ export default function Listagem() {
             <button
               key={btn.tipo}
               onClick={() => filtrarPorTipo(btn.tipo)}
-              className={`px-5 py-2 rounded-full font-semibold cursor-pointer transition ${
+              className={`px-3 sm:px-4 py-2 rounded-full font-semibold text-sm sm:text-base cursor-pointer transition ${
                 tipoAtivo === btn.tipo
                   ? `bg-${btn.cor}-600 text-white`
                   : `bg-${btn.cor}-500 text-white hover:bg-${btn.cor}-600`
