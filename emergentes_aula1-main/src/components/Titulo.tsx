@@ -122,10 +122,15 @@ export default function Titulo() {
                     onClick={() => setMenuAberto(false)}
                     className="
                       relative
-                      px-2 py-1
+            
                       transition
-                      hover:text-blue-200
+                    
                       flex items-center gap-2
+                  
+                      px-2 py-1
+                      
+                      hover:text-blue-200
+                      
                     "
                   >
                     Minhas Mensagens

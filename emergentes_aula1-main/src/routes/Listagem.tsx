@@ -117,7 +117,7 @@ export default function Listagem() {
               className={`px-3 sm:px-4 py-2 rounded-full font-semibold text-sm sm:text-base cursor-pointer transition ${
                 tipoAtivo === btn.tipo
                   ? `bg-${btn.cor}-600 text-white`
-                  : `bg-${btn.cor}-500 text-white hover:bg-${btn.cor}-600`
+                  : `bg-${btn.cor}-500 text-white hover:bg-${btn.cor}-700`
               }`}
             >
               {btn.label}
@@ -130,7 +130,7 @@ export default function Listagem() {
       <section className="text-center mt-10 px-4">
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900">
           Encontre seu{" "}
-          <span className="underline underline-offset-4 decoration-orange-400">
+          <span className="underline underline-offset-4 decoration-blue-700">
             Pet
           </span>
         </h1>
