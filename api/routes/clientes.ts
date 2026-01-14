@@ -81,7 +81,12 @@ router.post("/cadastro", async (req, res) => {
       </div>
     `
     
-    await enviarEmail(email, "🐾 Bem-vindo ao PetPel!", emailHtml)
+    try {
+  await enviarEmail(email, "🐾 Bem-vindo ao PetPel!", emailHtml)
+} catch (err) {
+  console.error("⚠️ Falha ao enviar email, cadastro mantido:", err)
+}
+
 
 
     res.status(201).json({
