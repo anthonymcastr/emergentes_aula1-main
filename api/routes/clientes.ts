@@ -52,29 +52,29 @@ router.post("/cadastro", async (req, res) => {
     // Enviar email de boas-vindas
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <div style="background: linear-gradient(135deg, #f97316, #ea580c); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+        <div style="background: linear-gradient(135deg, #1e293b, #0c4a6e); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
           <h1 style="color: white; margin: 0;">🐾 Bem-vindo ao PetPel!</h1>
         </div>
         <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e5e7eb; border-top: none;">
-          <h2 style="color: #1f2937;">Olá, ${nome.split(' ')[0]}!</h2>
-          <p style="color: #4b5563; line-height: 1.6;">
+          <h2 style="color: #1e293b;">Olá, ${nome.split(' ')[0]}!</h2>
+          <p style="color: #334155; line-height: 1.6;">
             Seu cadastro foi realizado com sucesso! Agora você faz parte da nossa comunidade de amantes de animais.
           </p>
-          <p style="color: #4b5563; line-height: 1.6;">
+          <p style="color: #334155; line-height: 1.6;">
             Com sua conta você pode:
           </p>
-          <ul style="color: #4b5563; line-height: 1.8;">
+          <ul style="color: #334155; line-height: 1.8;">
             <li>🐕 Cadastrar animais para adoção</li>
             <li>💬 Enviar mensagens para outros usuários</li>
             <li>❤️ Encontrar seu novo melhor amigo</li>
           </ul>
           <div style="text-align: center; margin-top: 30px;">
-            <a href="https://emergentes-aula1-main.vercel.app/login" 
-               style="background: #f97316; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+            <a href="https://petpelrs.com.br/login" 
+               style="background: #1e293b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
               Acessar Minha Conta
             </a>
           </div>
-          <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 30px;">
+          <p style="color: #64748b; font-size: 12px; text-align: center; margin-top: 30px;">
             Se você não criou esta conta, ignore este email.
           </p>
         </div>
