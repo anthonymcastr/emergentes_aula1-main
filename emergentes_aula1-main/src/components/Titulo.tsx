@@ -53,11 +53,11 @@ export default function Titulo() {
     <nav className="sticky top-0 z-50 bg-blue-900 shadow-md">
       <div className="w-full flex items-center justify-between px-8 py-3">
         {/* Logo */}
-        <Link to="/" onClick={handleHomeClick} className="flex items-center">
+        <Link to="/" onClick={handleHomeClick} className="flex items-center -ml-10 md:ml-0">
           <img
             src="/img/logo-novo-white.png"
             alt="Logo Petpel"
-            className="h-16 transition-transform hover:scale-105 ml-[-15px] "
+            className="h-16 transition-transform hover:scale-105 "
           />
         </Link>
 
