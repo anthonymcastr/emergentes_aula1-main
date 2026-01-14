@@ -13,6 +13,7 @@ const clienteSchema = z.object({
   email: z.string().email({ message: "Informe um e-mail válido" }),
   senha: z.string(),
   telefone: z.string().min(8, { message: "Informe um telefone válido" }),
+  cpf: z.string().refine(validaCPF, { message: "CPF inválido" })
 })
 
 // ---------------------------
@@ -35,7 +36,8 @@ router.post("/cadastro", async (req, res) => {
       return res.status(400).json({ error: parseResult.error.errors.map(e => e.message).join(", ") })
     }
 
-    const { nome, email, senha, telefone } = parseResult.data
+
+    const { nome, email, senha, telefone, cpf } = parseResult.data
 
     const existente = await prisma.cliente.findUnique({ where: { email } })
     if (existente) return res.status(400).json({ error: "E-mail já cadastrado" })
@@ -46,8 +48,25 @@ router.post("/cadastro", async (req, res) => {
     const hash = await bcrypt.hash(senha, 10)
 
     const cliente = await prisma.cliente.create({
-      data: { nome, email, senha: hash, telefone, role: "USER" }
+      data: { nome, email, senha: hash, telefone, cpf, role: "USER" }
     })
+// ---------------------------
+// FUNÇÃO DE VALIDAÇÃO DE CPF
+function validaCPF(cpf: string): boolean {
+  cpf = cpf.replace(/\D/g, "");
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+  let soma = 0, resto;
+  for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf.substring(9, 10))) return false;
+  soma = 0;
+  for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf.substring(10, 11))) return false;
+  return true;
+}
 
     // Enviar email de boas-vindas
     const emailHtml = `

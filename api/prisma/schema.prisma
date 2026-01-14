@@ -28,6 +28,7 @@ model Cliente {
   email     String   @unique
   telefone  String
   senha     String
+  cpf       String?  @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   role      String   @default("user")
