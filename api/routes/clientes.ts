@@ -69,7 +69,7 @@ router.post("/cadastro", async (req, res) => {
             <li>❤️ Encontrar seu novo melhor amigo</li>
           </ul>
           <div style="text-align: center; margin-top: 30px;">
-            <a href="https://petpelrs.com.br/login" 
+            <a href="https://www.petpelrs.com.br/login" 
                style="background: #1e293b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
               Acessar Minha Conta
             </a>
