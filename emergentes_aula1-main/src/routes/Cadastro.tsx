@@ -8,6 +8,7 @@ type Inputs = {
   email: string;
   senha: string;
   telefone: string;
+  cpf: string;
 };
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -77,6 +78,27 @@ export default function Cadastro() {
   const nome = watch("nome", "");
   const email = watch("email", "");
   const telefone = watch("telefone", "");
+  const cpf = watch("cpf", "");
+
+  // Validação simples de CPF (formato e dígitos)
+  function validaCPF(cpf: string) {
+    cpf = cpf.replace(/\D/g, "");
+    if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+    let soma = 0,
+      resto;
+    for (let i = 1; i <= 9; i++)
+      soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(cpf.substring(9, 10))) return false;
+    soma = 0;
+    for (let i = 1; i <= 10; i++)
+      soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(cpf.substring(10, 11))) return false;
+    return true;
+  }
 
   // Função para determinar a classe da borda do input
   const getInputClass = (fieldName: keyof Inputs, isValid: boolean) => {
@@ -97,6 +119,7 @@ export default function Cadastro() {
   const nomeValido = nome.length >= 10;
   const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const telefoneValido = telefone.length >= 8;
+  const cpfValido = validaCPF(cpf);
 
   // Valida se a senha atende todos os requisitos
   const senhaValida =
@@ -222,6 +245,32 @@ export default function Cadastro() {
               {errors.telefone && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.telefone.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="cpf"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                CPF
+              </label>
+              <input
+                type="text"
+                id="cpf"
+                placeholder="Ex: 123.456.789-09"
+                {...register("cpf", {
+                  required: "CPF é obrigatório",
+                  validate: (value) =>
+                    validaCPF(value) || "Digite um CPF válido",
+                })}
+                className={getInputClass("cpf", cpfValido)}
+                maxLength={14}
+              />
+              {errors.cpf && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.cpf.message}
                 </p>
               )}
             </div>
