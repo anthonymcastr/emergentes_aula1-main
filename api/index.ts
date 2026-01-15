@@ -26,7 +26,7 @@ app.use("/clientes/login", routesLogin)
 app.use("/contatos", routesContatos)
 app.use("/clientes/contatos", routesContatos)
 app.use("/login-admin", routesLoginAdmin)
-app.use("/admins", routesAdmins)
+// app.use("/admins", routesAdmins) // ROTA DESABILITADA TEMPORARIAMENTE
 app.use("/admin/contatos", propostasAdmin)
 
 
