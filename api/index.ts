@@ -29,6 +29,7 @@ app.use("/login-admin", routesLoginAdmin)
 app.use("/admins", routesAdmins)
 app.use("/admin/contatos", propostasAdmin)
 
+console.log("API URL teste")
 
 
 

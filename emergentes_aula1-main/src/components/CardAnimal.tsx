@@ -1,4 +1,4 @@
-import type { Animal } from "../utils/AnimalType";
+import type { Animal } from "../utils/animalType";
 
 type CardAnimalProps = {
   data: Animal;

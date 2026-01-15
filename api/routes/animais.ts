@@ -105,6 +105,14 @@ router.get("/:id", async (req, res) => {
 // POST - CRIAR ANIMAL
 // ========================
 router.post("/", async (req, res) => {
+    // LOG extra para depuração do Sightengine
+    
+    // LOG da URL recebida
+    if (req.body && req.body.urlImagem) {
+      console.log("URL da imagem recebida:", req.body.urlImagem);
+    } else {
+      console.log("Nenhuma urlImagem recebida no body!");
+    }
   const valida = animalSchema.safeParse(req.body)
   if (!valida.success) return res.status(400).json({ erro: valida.error.errors })
 
@@ -114,10 +122,13 @@ router.post("/", async (req, res) => {
   try {
     const imagemSegura = await verificaImagemSegura(urlImagem)
     if (!imagemSegura) {
-      return res.status(400).json({ erro: "Imagem imprópria detectada. Por favor, envie uma imagem adequada." })
+      console.log("Imagem bloqueada pelo safeSearch!");
+      return res.status(400).json({ erro: "Falha ao cadastrar animal. São permitidas apenas fotos de animais no nosso sistema. Agradecemos a compreensão." })
+    } else {
+      console.log("Imagem passou pelo safeSearch!");
     }
   } catch (err) {
-    console.error("Erro ao verificar imagem no Google Vision:", err)
+    console.error("Erro ao verificar imagem no Sightengine:", err)
     return res.status(500).json({ erro: "Erro ao verificar imagem. Tente novamente mais tarde." })
   }
 
@@ -126,6 +137,7 @@ router.post("/", async (req, res) => {
       data: { nome, idade, raca, urlImagem, tipo, cidade, usuarioId },
       include: includeUsuario,
     })
+    console.log("Animal cadastrado com sucesso:", animal);
 
     // 📧 Email de confirmação de cadastro
     if (animal.usuario?.email) {
