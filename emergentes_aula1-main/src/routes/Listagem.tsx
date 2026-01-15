@@ -153,18 +153,18 @@ export default function Listagem() {
           <div
             className="
               flex
-              flex-nowrap
-              justify-center
+              flex-col
+              items-center
               gap-6
               max-w-6xl
               mx-auto
-              overflow-x-auto
               pb-2
+              sm:flex-row sm:flex-nowrap sm:justify-center sm:overflow-x-auto
             "
           >
             {animais.length > 0 ? (
               animais.map((animal) => (
-                <div className="min-w-[300px] max-w-xs flex-shrink-0">
+                <div className="w-full max-w-xs flex-shrink-0">
                   <CardAnimal
                     key={animal.id}
                     data={animal}

@@ -3,6 +3,7 @@ import { Router } from "express"
 import { z } from "zod"
 import { autentica, AuthRequest } from "../middleware/autentica"
 import { enviarEmail } from "../utils/email"
+import { verificaImagemSegura } from "../utils/safeSearch"
 
 const prisma = new PrismaClient()
 const router = Router()
@@ -109,6 +110,17 @@ router.post("/", async (req, res) => {
 
   const { nome, idade, raca, urlImagem, tipo, cidade, usuarioId } = valida.data
 
+  // Verificação automática de imagem imprópria
+  try {
+    const imagemSegura = await verificaImagemSegura(urlImagem)
+    if (!imagemSegura) {
+      return res.status(400).json({ erro: "Imagem imprópria detectada. Por favor, envie uma imagem adequada." })
+    }
+  } catch (err) {
+    console.error("Erro ao verificar imagem no Google Vision:", err)
+    return res.status(500).json({ erro: "Erro ao verificar imagem. Tente novamente mais tarde." })
+  }
+
   try {
     const animal = await prisma.animal.create({
       data: { nome, idade, raca, urlImagem, tipo, cidade, usuarioId },
@@ -120,12 +132,12 @@ router.post("/", async (req, res) => {
       const tipoTexto = tipo === "ADOCAO" ? "para adoção" : tipo === "PERDIDO" ? "perdido" : "encontrado"
       const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #1e3a8a;">🐾 Cadastro realizado com sucesso!</h2>
+          <h2 style=\"color: #1e3a8a;\">🐾 Cadastro realizado com sucesso!</h2>
           <p>Olá, <strong>${animal.usuario.nome}</strong>!</p>
           <p>Seu pet <strong>${nome}</strong> foi cadastrado com sucesso na plataforma PetPel.</p>
-          <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <div style=\"background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;\">
             <p><strong>Detalhes do cadastro:</strong></p>
-            <ul style="list-style: none; padding: 0;">
+            <ul style=\"list-style: none; padding: 0;\">
               <li>🐶 <strong>Nome:</strong> ${nome}</li>
               <li>📍 <strong>Tipo:</strong> ${tipoTexto}</li>
               <li>🐾 <strong>Raça:</strong> ${raca}</li>
@@ -134,7 +146,7 @@ router.post("/", async (req, res) => {
             </ul>
           </div>
           <p>Agora outras pessoas poderão visualizar e entrar em contato sobre o ${nome}.</p>
-          <p style="color: #6b7280; font-size: 12px;">Equipe PetPel RS</p>
+          <p style=\"color: #6b7280; font-size: 12px;\">Equipe PetPel RS</p>
         </div>
       `
 
