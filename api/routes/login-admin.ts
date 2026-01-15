@@ -9,28 +9,10 @@ const router = Router()
 
 
 
-router.post("/", async (req, res) => {
-  const { email, senha } = req.body
 
-  const admin = await prisma.admin.findFirst({ where: { email } })
-  if (!admin) return res.status(401).json({ error: "Administrador não encontrado" })
-
-  const senhaValida = await bcrypt.compare(senha, admin.senha)
-  if (!senhaValida) return res.status(401).json({ error: "E-mail ou senha incorretos" })
-
-  const token = jwt.sign(
-    { id: admin.id, role: admin.role },
-    process.env.JWT_SECRET || "segredo",
-    { expiresIn: "1h" }
-  )
-
-  res.status(200).json({
-    id: admin.id,
-    nome: admin.nome,
-    email: admin.email,
-    role: admin.role,
-    token 
-  })
+// BLOQUEIA TODAS AS REQUISIÇÕES NA ROTA DE LOGIN-ADMIN
+router.use((req, res) => {
+  res.status(403).json({ error: "Rota de login-admin temporariamente desabilitada" })
 })
 
 
