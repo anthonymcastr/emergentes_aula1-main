@@ -40,7 +40,7 @@ O sistema permite o cadastro e gerenciamento de clientes, animais, propostas e a
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/emergentes_aula1-main.git
+   git clone https://github.com/seu-usuario/petpelrs.git
    ```
 2. Instale as dependências do frontend e backend:
    ```bash
